@@ -2,6 +2,11 @@
   "dependencies": {
     "colors": "^1.4.0",
     "cpu-stat": "^2.0.1",
+    "cuid": "^2.1.8",
+    "level": "^7.0.1",
+    "level-sublevel": "^6.6.5",
+    "leveldown": "^6.1.0",
+    "levelup": "^5.1.1",
     "md5-node": "^1.0.1",
     "oicq": "^2.2.0",
     "silly-datetime": "^0.1.2",

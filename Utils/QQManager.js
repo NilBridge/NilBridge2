@@ -4,7 +4,9 @@ const logger = new NIL.Logger("QQManager");
 NIL.EventManager.addEvent('QQManager','onRotboOnline');
 NIL.EventManager.addEvent('QQManager','onGroupMessageReceived');
 NIL.EventManager.addEvent('QQManager','onFriendMessageReceived');
-if(NIL.IO.exists('./Data/QQ.json')==false)NIL.IO.WriteTo('./Data/QQ.json',JSON.stringify({qq:114514,pwd:'1234567',platform:2,qrcode:true},null,'\t'));
+if(NIL.IO.exists('./Data/QQ.json')==false){
+    NIL.IO.WriteTo('./Data/QQ.json',JSON.stringify({qq:114514,pwd:'1234567',platform:2,qrcode:true},null,'\t'));
+}
 
 const cfg = JSON.parse(NIL.IO.readFrom('./Data/QQ.json'));
 

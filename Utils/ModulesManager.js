@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const logger = new NIL.Logger('PluginsManager');
+const logger = new NIL.Logger('ModulessManager');
 
-if (NIL.IO.exists('./plugins/config.json') == false) {
-    NIL.IO.WriteTo('./plugins/config.json', '{}');
+if (NIL.IO.exists('./modules/config.json') == false) {
+    NIL.IO.WriteTo('./modules/config.json', '{}');
 }
 
 class Plugin {
@@ -26,7 +26,7 @@ class Plugin {
     }
     unload() {
         this._EventIDs.forEach(NIL.EventManager.remCallback);
-        var pt = path.join(__dirname, '../plugins', this._name);
+        var pt = path.join(__dirname, '../modules', this._name);
         delete require.cache[require.resolve(pt)];
     }
     get logger() {
@@ -34,12 +34,12 @@ class Plugin {
     }
 }
 
-let plugins = {};
+let modules = {};
 
 function loadAll() {
     var cfg = {};
-    var pls = JSON.parse(fs.readFileSync('./plugins/config.json', 'utf8'));
-    fs.readdirSync('./plugins/').forEach(p => {
+    var pls = JSON.parse(fs.readFileSync('./modules/config.json', 'utf8'));
+    fs.readdirSync('./modules/').forEach(p => {
         if (p != 'config.json'){
             try {
                 if(pls[p]==false)return;
@@ -50,32 +50,32 @@ function loadAll() {
             }
         }
     });
-    fs.writeFileSync('./plugins/config.json', JSON.stringify(cfg, null, '\t'), 'utf8');
+    fs.writeFileSync('./modules/config.json', JSON.stringify(cfg, null, '\t'), 'utf8');
 }
 
 function unloadAll() {
-    for (let pl in plugins) {
-        plugins[pl].unload();
+    for (let pl in modules) {
+        modules[pl].unload();
     }
 }
 
 function unload(name) {
-    if (plugins[name] == undefined) return false;
-    plugins[name].unload();
+    if (modules[name] == undefined) return false;
+    modules[name].unload();
     return true;
 }
 
 function load(p) {
-    var pt = path.join(__dirname, '../plugins', p);
+    var pt = path.join(__dirname, '../modules', p);
     logger.info(`loading ${p}`);
     var part = require(pt);
-    plugins[p] = new Plugin(p.split(".")[0], part);
-    part.onStart(plugins[p]);
+    modules[p] = new Plugin(p.split(".")[0], part);
+    part.onStart(modules[p]);
 }
 
 loadAll();
 
-NIL.PluginsManager = {
+NIL.modulesManager = {
     unloadAll,
     loadAll,
     load,

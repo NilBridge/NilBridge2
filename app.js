@@ -16,5 +16,12 @@ const rl = readline.createInterface({
 
 
 rl.on('line',(input)=>{
-    
+    switch(input){
+        case 'stop':
+            break;
+        case 'plreload':
+            NIL.modulesManager.unloadAll();
+            NIL.modulesManager.loadAll();
+            break;
+    }
 });
