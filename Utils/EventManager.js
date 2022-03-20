@@ -19,7 +19,7 @@ function on(evt,parmas){
         return;
     }
     logger.info(`calling event : ${evt}`);
-    console.log(parmas);
+    //console.log(parmas);
     for(var i in Events[evt]){
         let tmp = Events[evt][i];
         try{
