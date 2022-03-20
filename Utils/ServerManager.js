@@ -45,7 +45,6 @@ class SERVER {
         return this._iv;
     }
     sendCMD(cmd,callback){
-        console.log(`cmd ${cmd} send`);
         let id = GUID();
         this._ws.send(helper.GetRuncmdPack(this._k,this._iv,cmd,id));
         callbacks[id] = callback;
@@ -68,7 +67,6 @@ function onmessage(name,k,iv){
 }
 
 NIL.EventManager.listen('MAIN','onWebsocketReceived',(dt)=>{
-    logger.info(dt.message);
     let data = JSON.parse(dt.message);
     if(callbacks[data.params.id] != undefined){
         callbacks[data.params.id](data.params.result);
