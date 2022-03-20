@@ -5,39 +5,39 @@ const path = require('path');
  * 读取文件内容
  * @param {String} path 文件路径 
  */
-function readFrom(path,encoding = 'utf8'){
-    try{
-        return fs.readFileSync(path,{encoding});
-    }catch(err){
+function readFrom(path, encoding = 'utf8') {
+    try {
+        return fs.readFileSync(path, { encoding });
+    } catch (err) {
         logger.error(err);
         return '';
     }
 }
 
-function WriteTo(path,data,encoding = 'utf8'){
-    try{
-        fs.writeFileSync(path,data,{encoding});
-    }catch(err){
+function WriteTo(path, data, encoding = 'utf8') {
+    try {
+        fs.writeFileSync(path, data, { encoding });
+    } catch (err) {
         logger.error(err);
         return '';
     }
 }
 
 function createDir(dir) {
-    try{
+    try {
         fs.mkdirSync(dir, { recursive: true });
         return true;
-    }catch(err){
+    } catch (err) {
         logger.error(err);
         return false;
     }
 }
 
-function deleteFile(path){
-    try{
+function deleteFile(path) {
+    try {
         fs.unlinkSync(path);
         return true;
-    }catch(err){
+    } catch (err) {
         logger.error(err);
         return false;
     }
@@ -48,11 +48,11 @@ function deleteFile(path){
  * @param {String} path 文件路径 
  * @returns 是否存在
  */
-function exists(path){
-    try{
+function exists(path) {
+    try {
         fs.statSync(path);
         return true;
-    }catch{
+    } catch {
         return false;
     }
 }
@@ -62,23 +62,30 @@ function exists(path){
  * @param {String} p 路径
  * @returns 文件、文件夹列表
  */
-function getFilesList(p){
-    if(exists(p)==false){
+function getFilesList(p) {
+    if (exists(p) == false) {
         logger.warn(`no such dir named ${path} !!`);
         return [];
     }
-    try{
+    try {
         let lists = fs.readdirSync(p);;
         let rt = {};
-        lists.forEach(name=>{
-            let option =fs.statSync(path.join(p,name));
-            rt[name]=option;
+        lists.forEach(name => {
+            let option = fs.statSync(path.join(p, name));
+            rt[name] = option;
         });
         return rt;
-    }catch(err){
+    } catch (err) {
         logger.error(err);
         return [];
     }
 }
 
-NIL.IO = {readFrom,WriteTo,createDir,delete:deleteFile,exists,getFilesList};
+NIL.IO = { 
+    readFrom, 
+    WriteTo, 
+    createDir, 
+    delete: deleteFile, 
+    exists, 
+    getFilesList 
+};

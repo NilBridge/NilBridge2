@@ -5,10 +5,9 @@ require('./Utils/EventManager');
 require('./Utils/FileSystem');
 if(NIL.IO.exists('./Data')==false)NIL.IO.createDir('./Data');
 require('./Utils/ServerManager');
+require('./Utils/QQManager');
 require('./Utils/PluginsManager');
 NIL.EventManager.on('onServerStart');
-
-/*
 const readline = require('readline');
 const rl = readline.createInterface({
     input: process.stdin,
@@ -17,7 +16,5 @@ const rl = readline.createInterface({
 
 
 rl.on('line',(input)=>{
-	NIL.PluginsManager.unloadAll();
-    NIL.PluginsManager.loadAll();
+    
 });
-*/

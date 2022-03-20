@@ -30,7 +30,6 @@ class SERVER {
     constructor(url,name,pwd){
         this._k = md5(pwd).substring(0,16).toUpperCase();
         this._iv = md5(pwd).substring(16,32).toUpperCase();
-        console.log(this._iv,this._k);
         this._url = url;
         this._name = name;
         this._ws = new client(url,name,onmessage(name,this._k,this._iv));
