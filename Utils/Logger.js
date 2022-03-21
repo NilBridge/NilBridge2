@@ -10,7 +10,7 @@ NIL.Logger = class{
         console.log(silly.format(new Date(),this.TimeFormat).cyan ,'INFO'.green,`[${this.ModuleName}]`,Object.values(arguments).join(this.Format));
     }
     error(){
-        console.log(silly.format(new Date(),this.TimeFormat).cyan ,'INFO'.bgRed,`[${this.ModuleName}]`,arguments[0].stack);
+        console.log(silly.format(new Date(),this.TimeFormat).cyan ,'ERROR'.bgRed,`[${this.ModuleName}]`,arguments[0].stack);
     }
     warn(){
         console.log(silly.format(new Date(),this.TimeFormat).cyan ,'WARN'.bgYellow,`[${this.ModuleName}]`,Object.values(arguments).join(this.Format));

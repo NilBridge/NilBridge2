@@ -88,9 +88,9 @@ function wl_remove(qq){
     })
 }
 
-function RuncmdAll(cmd) {
+function RuncmdAll(cmd,self) {
     NIL.SERVERS.forEach(s => {
-        s.sendCMD(cmd, (dt) => { });
+        s.sendCMD(cmd, (dt) => {NIL.bots.getBot(self).sendGroupMsg(cfg.group.main,dt)});
     });
 }
 
@@ -164,10 +164,11 @@ function group_main(e) {
                 return;
             }
             if (NIL.SERVERS.size == 1) {
-                e.reply(langhelper.get("COMMAND_SENDTO_SERVER", text.substring(cfg.cmd.length + 1), i), true);
-                NIL.SERVERS.forEach(s => {
-                    s.sendCMD('list', (dt) => {
-                        e.reply(langhelper.get("CMD_FEEDBACK", dt));
+                let cmd = text.substring(cfg.cmd.length + 1);
+                NIL.SERVERS.forEach((s,k) => {
+                    e.reply(langhelper.get("COMMAND_SENDTO_SERVER", cmd, k), true);
+                    s.sendCMD(cmd, (dt) => {
+                        e.reply(dt);
                     });
                 });
             }
@@ -179,7 +180,7 @@ function group_main(e) {
                     }
                     e.reply(langhelper.get("COMMAND_SENDTO_SERVER", text.substring(`/cmd ${pt[1]} `.length), pt[1]), true);
                     NIL.SERVERS.get(pt[1]).sendCMD(text.substring(`${cfg.cmd} ${pt[1]} `.length), (dt) => {
-                        e.reply(langhelper.get("CMD_FEEDBACK", dt));
+                        e.reply(langhelper.get("CMD_FEEDBACK",pt[1], dt));
                     });
                 } else {
                     e.reply(langhelper.get('COMMAND_OVERLOAD_NOTFIND'), true);
@@ -220,7 +221,7 @@ function group_main(e) {
                             if (cfg.auto_rename) e.member.setCard(xbox);
                             e.reply(langhelper.get('MEMBER_BIND_SUCCESS', xbox), true);
                             if(cfg.auto_wl){
-                                RuncmdAll(`whitelist remove "${xbox}"`);
+                                RuncmdAll(`whitelist remove "${xbox}"`,e.self_id);
                                 e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, xbox));
                             }
                         }
@@ -236,7 +237,7 @@ function group_main(e) {
                     get_xboxid(e.sender.qq, (err, id) => {
                         wl_remove(e.sender.qq);
                         e.reply(langhelper.get('MEMBER_UNBIND'), true);
-                        RuncmdAll(`whitelist remove "${id}"`);
+                        RuncmdAll(`whitelist remove "${id}"`,e.self_id);
                         e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, id));
                     });
                 }
@@ -253,7 +254,7 @@ function group_main(e) {
                     wl_exists(element, (has) => {
                         if (has) {
                             get_xboxid(element, (err, xbox) => {
-                                RuncmdAll(`allowlist add "${xbox}"`);
+                                RuncmdAll(`allowlist add "${xbox}"`,e.self_id);
                                 e.reply(langhelper.get('ADD_WL_TO_SERVER', element, xbox));
                             });
                         } else {
@@ -276,7 +277,7 @@ function group_main(e) {
                     } else {
                         get_xboxid(element,(err,xbox)=>{
                             e.reply(langhelper.get('REMOVE_WL_TO_SERVER', element, xbox));
-                            RuncmdAll(`whitelist remove "${xbox}"`);
+                            RuncmdAll(`whitelist remove "${xbox}"`,e.self_id);
                             wl_remove(element);
                         })
                     }
