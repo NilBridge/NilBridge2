@@ -47,9 +47,9 @@ function batch(arr, callback) {
             if (item.hasOwnProperty('value')) {
                 listMember.value = item.value;
             }
-            if (listMember.hasOwnProperty('type') && 
-                        listMember.hasOwnProperty('key') && 
-                                listMember.hasOwnProperty('value')) {
+            if (listMember.hasOwnProperty('type') &&
+                listMember.hasOwnProperty('key') &&
+                listMember.hasOwnProperty('value')) {
                 batchList.push(listMember);
             }
         }
@@ -66,7 +66,7 @@ function batch(arr, callback) {
 }
 
 function find(find, callback) {
-    var option = {keys: true, values: true, revers: false, limit: 20, fillCache: true};
+    var option = { keys: true, values: true, revers: false, limit: 20, fillCache: true };
     if (!find)
         return callback('nothing', null);
     else {
@@ -79,13 +79,13 @@ function find(find, callback) {
         if (find.limit)
             option.limit = find.limit;
 
-        db.createReadStream(option).on('data',function (data) {
-            data&&callback(data.key, data.value);
-        }).on('error',function (err) {
-            }).on('close',function () {
-            }).on('end', function () {
-                return callback(null, Date.now());
-            });
+        db.createReadStream(option).on('data', function (data) {
+            data && callback(data.key, data.value);
+        }).on('error', function (err) {
+        }).on('close', function () {
+        }).on('end', function () {
+            return callback(null, Date.now());
+        });
     }
 }
 

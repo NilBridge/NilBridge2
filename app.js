@@ -8,7 +8,6 @@ if(NIL.IO.exists('./Data')==false)NIL.IO.createDir('./Data');
 require('./Utils/ServerManager');
 require('./Utils/QQManager');
 require('./Utils/ModulesManager');
-NIL.EventManager.on('onServerStart');
 const readline = require('readline');
 const rl = readline.createInterface({
     input: process.stdin,
@@ -29,4 +28,9 @@ rl.on('line',(input)=>{
             });
             break;
     }
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+	console.log(reason);
+    console.log(promise);
 });

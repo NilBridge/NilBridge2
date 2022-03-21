@@ -5,11 +5,12 @@
 	"add_wl": "wl+",
 	"rem_wl": "wl-",
 	"check": "查服",
+	"nbcmd":"/nbcmd",
 	"auto_wl": false,
 	"auto_rename": true,
 	"auto_remove": true,
 	"group": {
 		"main": 1020160254,
-		"chat": 1020160254
+		"chat": 925057221
 	}
 }

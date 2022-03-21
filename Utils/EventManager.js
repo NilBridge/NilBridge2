@@ -83,8 +83,6 @@ function listen(plname,evt,callback){
     return addCallback(plname,evt,callback);
 }
 
-addEvent('MAIN','onServerStart');
-addEvent('MAIN','onServerStop');
 NIL.EventManager = {
     listen,
     on,

@@ -84,7 +84,10 @@ function getEventObj(e,qq) {
         atall: e.atall,
         id: e.message_id,
         message: e.message,
+        member:e.member,
         sender: {
+            qq: e.sender.user_id,
+            nick: e.sender.nickname,
             isAdmin: e.sender.role != 'member',
             send(msg) {
                 NIL.bots.getBot(qq).sendPrivateMsg(e.user_id, msg);
@@ -107,15 +110,6 @@ function getOnMessage(qq){
     return (e)=>{
         let obj = getEventObj(e,qq);
         NIL.EventManager.on('onGroupMessageReceived', obj);
-        /*
-        switch (e.group_id) {
-            case cfg.group.main:
-                NIL.EventManager.on('onMainMessageReceived', obj);
-                break;
-            case cfg.group.chat:
-                NIL.EventManager.on('onChatMessageReceived', obj);
-                break;
-        } */
     }
 }
 

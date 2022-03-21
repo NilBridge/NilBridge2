@@ -1,28 +1,32 @@
 const dbhelper = require('./leveldb');
+const langhelper = require('./Lang');
+langhelper.init();
 const path = require('path');
-function checkFile(file,text){
-    if(NIL.IO.exists(path.join(__dirname,file))==false){
-        NIL.IO.WriteTo(path.join(__dirname,file),text);
+function checkFile(file, text) {
+    if (NIL.IO.exists(path.join(__dirname, file)) == false) {
+        NIL.IO.WriteTo(path.join(__dirname, file), text);
     }
 }
 
-checkFile('config.json',JSON.stringify({
-    bind:'/bind',
-    cmd:'/cmd',
-    unbind:'/unbind',
-    add_wl:'wl+',
-    rem_wl:'wl-',
-    check:'查服',
-    auto_wl:false,
-    auto_rename:true,
-    auto_remove:true,
-    group:{
-        main:114514,
-        chat:114514
-    }
-},null,'\t'));
+checkFile('config.json', JSON.stringify({
+    bind: '/bind',
+    cmd: '/cmd',
+    unbind: '/unbind',
+    add_wl: 'wl+',
+    rem_wl: 'wl-',
+    check: '查服',
+    nbcmd: '/nbcmd',
+    auto_wl: false,
+    auto_rename: true,
+    auto_remove: true,
+    group: {
+        main: 114514,
+        chat: 114514
+    },
+    admins: []
+}, null, '\t'));
 
-const cfg = JSON.parse(NIL.IO.readFrom(path.join(__dirname,'config.json')));
+const cfg = JSON.parse(NIL.IO.readFrom(path.join(__dirname, 'config.json')));
 
 module.exports = {
     onStart(api) {
@@ -36,154 +40,244 @@ module.exports = {
         api.addEvent('onPlayerLeft');
         api.listen('onWebsocketReceived', (dt) => {
             let data = JSON.parse(dt.message);
-            switch(data.cause){
+            switch (data.cause) {
                 case 'join':
+                    NIL.EventManager.on('onPlayerJoin', dt);
                     break;
                 case 'left':
+                    NIL.EventManager.on('onPlayerLeft', dt);
                     break;
                 case 'server_start':
+                    NIL.EventManager.on('onServerStart', dt);
                     break;
                 case 'server_stop':
+                    NIL.EventManager.on('onServerStop', dt);
                     break;
             }
         });
-        api.listen('onGroupMessageReceived',(e)=>{
-            switch(e.group.id){
-                case cfg.group.main:
-                    NIL.EventManager.on('onMainMessageReceived',e);
-                    break;
-                case cfg.group.chat:
-                    NIL.EventManager.on('onChatMessageReceived',e);
-                    break;
+        api.listen('onGroupMessageReceived', (e) => {
+            if (cfg.group.main == e.group.id) {
+                group_main(e);
+                NIL.EventManager.on('onMainMessageReceived', e);
             }
+            if (e.group.id == cfg.group.chat) {
+                NIL.EventManager.on('onChatMessageReceived', e);
+            }
+
         });
     },
-    onStop(){
+    onStop() {
 
     }
 }
-function getText(e){
+function getText(e) {
     var rt = '';
-    for(i in e.message){
-        switch(e.message[i].type){
-            case"text":
-                rt+= e.message[i].text;
+    for (i in e.message) {
+        switch (e.message[i].type) {
+            case "text":
+                rt += e.message[i].text;
                 break;
         }
     }
     return rt;
 }
 
-function group_main(e){
-    let text = getText(e.message);
-    switch(pt[0]){
-        case "查服":
+function wl_remove(qq){
+    dbhelper.del(qq,(err)=>{
 
+    })
+}
+
+function RuncmdAll(cmd) {
+    NIL.SERVERS.forEach(s => {
+        s.sendCMD(cmd, (dt) => { });
+    });
+}
+
+function isAdmin(qq) {
+    return cfg.admins.indexOf(qq) != -1;
+}
+
+function get_xboxid(qq, cb) {
+    dbhelper.get(qq, cb);
+}
+
+function xbox_exists(id, cb) {
+    dbhelper.get(id, (err, dt) => {
+        if (err) {
+            cb(false);
+        } else {
+            cb(true);
+        }
+    });
+}
+
+function listKey(cb) {
+    let rt = {};
+    dbhelper.find(new Date(), (k, v) => {
+        rt[k] = v;
+        if (k == null) {
+            cb(rt);
+        }
+    });
+}
+
+function wl_exists(qq, cb) {
+    listKey((list) => {
+        if (list[qq] == undefined) {
+            cb(false);
+        } else {
+            cb(true);
+        }
+    });
+}
+
+function wl_add(qq, xboxid) {
+    dbhelper.put(qq, xboxid, console.log);
+}
+
+var getAt = function (e) {
+    var at = [];
+    for (i in e.message) {
+        switch (e.message[i].type) {
+            case "at":
+                at.push(e.message[i].qq);
+                break;
+        }
+    }
+    return at;
+};
+
+
+function group_main(e) {
+    let text = getText(e);
+    let pt = text.split(' ');
+    switch (pt[0]) {
+        case cfg.check:
+            NIL.SERVERS.forEach(s => {
+                s.sendCMD('list', e.reply);
+            });
             break;
-        case "/cmd":
-            if(NIL.CONFIG.ADMIN.indexOf(e.sender.user_id)==-1){
-                e.reply(NIL.LANG.get('MEMBER_NOT_ADMIN'));
+        case cfg.cmd:
+            if (isAdmin(e.sender.qq) == false) {
+                e.reply(langhelper.get('MEMBER_NOT_ADMIN'));
                 return;
             }
-            if(Object.keys(NIL.SERVERS).length == 1){
-                for(i in NIL.SERVERS){
-                    NIL.SERVERS[i].sendCMD(e.raw_message.substr(5));
-                    e.reply(NIL.LANG.get("COMMAND_SENDTO_SERVER",e.raw_message.substr(5),i),true);
-                }
+            if (NIL.SERVERS.size == 1) {
+                e.reply(langhelper.get("COMMAND_SENDTO_SERVER", text.substring(cfg.cmd.length + 1), i), true);
+                NIL.SERVERS.forEach(s => {
+                    s.sendCMD('list', (dt) => {
+                        e.reply(langhelper.get("CMD_FEEDBACK", dt));
+                    });
+                });
             }
-            else{
-                if(pt.length > 2){
-                    if(NIL.SERVERS[pt[1]] == undefined){
-                        e.reply(`没有名为${pt[1]}的服务器`,true);
+            else {
+                if (pt.length > 2) {
+                    if (NIL.SERVERS.has(pt[1]) == false) {
+                        e.reply(`没有名为${pt[1]}的服务器`, true);
                         return;
                     }
-                    NIL.SERVERS[pt[1]].sendCMD(e.raw_message.substr(`/cmd ${pt[1]} `.length));
-                    e.reply(NIL.LANG.get("COMMAND_SENDTO_SERVER",e.raw_message.substr(`/cmd ${pt[1]} `.length),pt[1]),true);
-                }else{
-                    e.reply(NIL.LANG.get('COMMAND_OVERLOAD_NOTFIND'),true);
+                    e.reply(langhelper.get("COMMAND_SENDTO_SERVER", text.substring(`/cmd ${pt[1]} `.length), pt[1]), true);
+                    NIL.SERVERS.get(pt[1]).sendCMD(text.substring(`${cfg.cmd} ${pt[1]} `.length), (dt) => {
+                        e.reply(langhelper.get("CMD_FEEDBACK", dt));
+                    });
+                } else {
+                    e.reply(langhelper.get('COMMAND_OVERLOAD_NOTFIND'), true);
                 }
             }
             break;
-        case "/nbcmd":
-            if(NIL.CONFIG.ADMIN.indexOf(e.sender.user_id)==-1){
-                e.reply(NIL.LANG.get('MEMBER_NOT_ADMIN'));
+        case cfg.nbcmd:
+            if (isAdmin(e.sender.qq) == false) {
+                e.reply(langhelper.get('MEMBER_NOT_ADMIN'), true);
                 return;
             }
-            let cmd = e.raw_message.substr(7);
-            NIL.NBCMD.run_cmd(cmd,(err,cb)=>{
-                if(err==null){
-                    e.reply(cb,true);
-                }else{
-                    e.reply(err,true);
+            let cmd = text.substring(cfg.nbcmd.length + 1);
+            NIL.NBCMD.run_cmd(cmd, (err, cb) => {
+                if (err) {
+                    e.reply(cb, true);
+                } else {
+                    e.reply('命令已执行', true);
                 }
             });
             break;
-        case "/bind":
-            if(pt.length<2){
-                e.reply(NIL.LANG.get('COMMAND_OVERLOAD_NOTFIND'),true);
+        case cfg.bind:
+            if (pt.length < 2) {
+                e.reply(langhelper.get('COMMAND_OVERLOAD_NOTFIND'), true);
                 return;
             }
-            if(NIL.XDB.wl_exsits(e.sender.user_id)){
-                e.reply(NIL.LANG.get('MEMBER_ALREADY_IN_WHITELIST',NIL.XDB.get_xboxid(e.sender.user_id)),true);
-                break;
-            }
-            var xbox = e.raw_message.substr(6);
-            if(NIL.XDB.xboxid_exsits(xbox)){
-                e.reply(NIL.LANG.get('XBOXID_ALREADY_BIND'),true);
-                break;
-            }
-            NIL.XDB.wl_add(e.sender.user_id,xbox);
-            if(NIL.CONFIG.AUTO_RENAME_AFTER_BIND) e.member.setCard(xbox);
-            e.reply(NIL.LANG.get('MEMBER_BIND_SUCCESS',xbox),true);
+            wl_exists(e.sender.qq, (has) => {
+                if (has) {
+                    get_xboxid(e.sender.qq, (err, id) => {
+                        e.reply(langhelper.get('MEMBER_ALREADY_IN_WHITELIST', id), true);
+                    })
+                } else {
+                    var xbox = text.substring(cfg.bind.length + 1);
+                    xbox_exists(xbox, (has) => {
+                        if (has) {
+                            e.reply(langhelper.get('XBOXID_ALREADY_BIND'), true);
+                        } else {
+                            wl_add(e.sender.qq, xbox);
+                            if (cfg.auto_rename) e.member.setCard(xbox);
+                            e.reply(langhelper.get('MEMBER_BIND_SUCCESS', xbox), true);
+                        }
+                    })
+                }
+            });
             break;
-        case "/unbind":
-            if(NIL.XDB.wl_exsits(e.sender.user_id)==false){
-                e.reply(NIL.LANG.get('MEMBER_NOT_BIND'),true);
-                break;
-            }
-            var xbox = NIL.XDB.get_xboxid(e.sender.user_id);
-            //console.log(xbox);
-            NIL.XDB.wl_remove(e.sender.user_id);
-            e.reply(NIL.LANG.get('MEMBER_UNBIND'),true);
-            helper.RunCMDAll(`whitelist remove "${xbox}"`);
-            e.reply(NIL.LANG.get('REMOVE_WL_TO_SERVER',e.sender.user_id,xbox));
+        case cfg.unbind:
+            wl_exists(e.sender.qq, (has) => {
+                if (has==false) {
+                    e.reply(langhelper.get('MEMBER_NOT_BIND'), true);
+                } else {
+                    var xbox = get_xboxid(e.sender.qq, (err, id) => {
+                        wl_remove(e.sender.qq);
+                        e.reply(langhelper.get('MEMBER_UNBIND'), true);
+                        RuncmdAll(`whitelist remove "${xbox}"`);
+                        e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, id));
+                    });
+                }
+            })
             break;
-        case "wl+":
-            if(NIL.CONFIG.ADMIN.indexOf(e.sender.user_id)==-1){
-                e.reply(NIL.LANG.get('MEMBER_NOT_ADMIN'));
+        case cfg.add_wl:
+            if (isAdmin(e.sender.qq) == false) {
+                e.reply(langhelper.get('MEMBER_NOT_ADMIN'));
                 return;
             }
-            var at = NIL.TOOL.getAt(e);
-            if(e.length!=0){
+            var at = getAt(e);
+            if (e.length != 0) {
                 at.forEach(element => {
-                    if(NIL.XDB.wl_exsits(element)){
-                        var xbox = NIL.XDB.get_xboxid(element);
-                        helper.RunCMDAll(`whitelist add "${xbox}"`);
-                        e.reply(NIL.LANG.get('ADD_WL_TO_SERVER',element,xbox));
-                    }else{
-                        e.reply(NIL.LANG.get('MEMBER_NOT_BIND_WHEN_REMOVE',element));
-                    }
-
+                    wl_exists(element, (has) => {
+                        if (has) {
+                            get_xboxid(element, (err, xbox) => {
+                                RuncmdAll(`allowlist add "${xbox}"`);
+                                e.reply(langhelper.get('ADD_WL_TO_SERVER', element, xbox));
+                            });
+                        } else {
+                            e.reply(langhelper.get('MEMBER_NOT_BIND_WHEN_REMOVE', element));
+                        }
+                    })
                 });
             }
             break;
-        case "wl-":
-            if(NIL.CONFIG.ADMIN.indexOf(e.sender.user_id)==-1){
-                e.reply(NIL.LANG.get('MEMBER_NOT_ADMIN'));
+        case cfg.rem_wl:
+            if (isAdmin(e.sender.qq) == false) {
+                e.reply(langhelper.get('MEMBER_NOT_ADMIN'));
                 return;
             }
-            var at = NIL.TOOL.getAt(e);
-            if(e.length!=0){
-                at.forEach(element => {
-                    if(!NIL.XDB.wl_exsits(element)){
-                        e.reply(NIL.LANG.get('MEMBER_NOT_BIND_WHEN_REMOVE',element));
-                    }else{
-                        e.reply(NIL.LANG.get('REMOVE_WL_TO_SERVER',element,NIL.XDB.get_xboxid(element)));
-                        helper.RunCMDAll(`whitelist remove "${NIL.XDB.get_xboxid(element)}"`);
-                        NIL.XDB.wl_remove(element);
+            var at = getAt(e);
+            at.forEach(element => {
+                wl_exists(element,(has)=>{
+                    if (!has) {
+                        e.reply(langhelper.get('MEMBER_NOT_BIND_WHEN_REMOVE', element));
+                    } else {
+                        get_xboxid(element,(err,xbox)=>{
+                            e.reply(langhelper.get('REMOVE_WL_TO_SERVER', element, xbox));
+                            RuncmdAll(`whitelist remove "${xbox}"`);
+                            wl_remove(element);
+                        })
                     }
-                });
-            }
+                })
+            });
             break;
     }
 }
