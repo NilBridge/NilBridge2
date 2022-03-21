@@ -9,6 +9,7 @@ function checkFile(file, text) {
 }
 
 checkFile('config.json', JSON.stringify({
+    self_id:114514,
     bind: '/bind',
     cmd: '/cmd',
     unbind: '/unbind',
@@ -65,6 +66,7 @@ module.exports = {
             }
 
         });
+        NIL._vanilla = cfg;
     },
     onStop() {
 
@@ -150,6 +152,7 @@ var getAt = function (e) {
 
 
 function group_main(e) {
+    if(e.self_id != cfg.self_id)return;
     let text = getText(e);
     let pt = text.split(' ');
     switch (pt[0]) {

@@ -83,6 +83,9 @@ function listen(plname,evt,callback){
     return addCallback(plname,evt,callback);
 }
 
+addEvent('MAIN','onNilBridgeStart');
+addEvent('MAIN','onNilBridgeStop');
+
 NIL.EventManager = {
     listen,
     on,

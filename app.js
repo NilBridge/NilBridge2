@@ -14,21 +14,21 @@ const rl = readline.createInterface({
     output: process.stdout
 })
 
-
+NIL.EventManager.on('onNilBridgeStart',{});
 rl.on('line',(input)=>{
-    switch(input){
-        case 'stop':
-            NIL.bots.logoutAll();
-            process.exit();
-        default:
-            NIL.NBCMD.run_cmd(input,(err,cb)=>{
-                if(err){
-                    logger.warn(err);
-                }
-            });
-            break;
-    }
+    NIL.NBCMD.run_cmd(input,(err,cb)=>{
+        if(err){
+            logger.warn(err);
+        }
+    });
 });
+
+NIL.NBCMD.regUserCmd('stop','关闭NilBridge',()=>{
+    logger.info('正在退出');
+    NIL.EventManager.on('onNilBridgeStop',{});
+    NIL.bots.logoutAll();
+    process.exit();
+})
 
 process.on('unhandledRejection', (reason, promise) => {
 	console.log(reason);
