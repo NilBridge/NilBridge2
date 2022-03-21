@@ -18,7 +18,7 @@ function on(evt,parmas){
         logger.warn('no such event : '+evt);
         return;
     }
-    logger.info(`calling event : ${evt}`);
+    logger.info(`calling event : ${evt.bgGreen}`);
     //console.log(parmas);
     for(var i in Events[evt]){
         let tmp = Events[evt][i];

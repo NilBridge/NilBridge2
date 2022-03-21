@@ -1,6 +1,6 @@
 const level = require("level");
 const sublevel = require("level-sublevel");
-const db = sublevel(level('./playerdata', { valueEncoding: "json" }));
+const db = sublevel(level('./Data/playerdata', { valueEncoding: "json" }));
 
 function put(key, value, callback) {
     if (key && value) {

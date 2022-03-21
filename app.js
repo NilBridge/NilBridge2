@@ -6,7 +6,7 @@ require('./Utils/FileSystem');
 if(NIL.IO.exists('./Data')==false)NIL.IO.createDir('./Data');
 require('./Utils/ServerManager');
 require('./Utils/QQManager');
-require('./Utils/PluginsManager');
+require('./Utils/ModulesManager');
 NIL.EventManager.on('onServerStart');
 const readline = require('readline');
 const rl = readline.createInterface({
@@ -18,7 +18,8 @@ const rl = readline.createInterface({
 rl.on('line',(input)=>{
     switch(input){
         case 'stop':
-            break;
+            NIL.bot.logout();
+            process.exit();
         case 'plreload':
             NIL.modulesManager.unloadAll();
             NIL.modulesManager.loadAll();

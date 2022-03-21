@@ -34,3 +34,79 @@ client.on("system.online", () => {
 client.on('message.group',(e)=>{
     NIL.EventManager.on('onGroupMessageReceived',e);
 });
+
+NIL.bot = {};
+
+/**
+ * 发送群聊消息
+ * @param group 群号
+ * @param msg   要发送的消息
+ */
+ NIL.bot.sendGroupMessage = function (group, msg) {
+    if (client.status != 11) { logger.warn('插件在QQ未登录时调用了API'); return; }//直接返回防止oicq崩溃
+    if (msg == "#") return;
+    if (group == undefined || msg == undefined) { logger.error('数据为空！！！'); return; }
+    client.sendGroupMsg(group, msg);
+  }
+  
+  /**
+   * 获取群员对象
+   * @param g 群号
+   * @param q 成员QQ号
+   * @returns 成员对象
+   */
+  NIL.bot.GetGroupMember = function (g, q) {
+    if (client.status != 11) { logger.warn( '插件在QQ未登录时调用了API'); return; }
+    return client.pickMember(g, q);
+  }
+  /**
+   * 发送私聊消息
+   * @param friend 好友QQ号
+   * @param msg   要发送的消息
+   */
+  NIL.bot.sendFriendMessage = function (friend, msg) {
+    if (client.status != 11) { logger.warn('插件在QQ未登录时调用了API'); return; }
+    if (friend == undefined || msg == undefined) { logger.error('数据为空！！！'); return; }
+    client.sendPrivateMsg(friend, msg);
+  }
+  
+  /**
+   * 发消息到主群(GROUP_MAIN)
+   * @param msg   要发送的消息
+   */
+  NIL.bot.sendMainMessage = function (msg) {
+    NIL.bot.sendGroupMessage(NIL.CONFIG.GROUP_MAIN, msg);
+  }
+  
+  /**
+   * 发消息到聊天群(GROUP_CHAT)
+   * @param msg   要发送的消息
+   */
+  NIL.bot.sendChatMessage = function (msg) {
+    NIL.bot.sendGroupMessage(NIL.CONFIG.GROUP_CHAT, msg);
+  }
+  
+  /**
+   * 获取群列表
+   */
+  NIL.bot.getGroupList = function () {
+    if (client.status != 11) { logger.warn('插件在QQ未登录时调用了API'); return; }
+    return client.getGroupList();
+  }
+  
+  /**
+   * 获取好友列表
+   */
+  NIL.bot.getFriendList = function () {
+    if (client.status != 11) { logger.warn('插件在QQ未登录时调用了API'); return; }
+    return client.getFriendList();
+  }
+  
+  /**
+   * 下线机器人
+   */
+  NIL.bot.logout = function () {
+    client.logout(false);
+  }
+  
+  

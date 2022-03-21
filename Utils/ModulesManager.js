@@ -15,7 +15,7 @@ class Plugin {
         this._logger = new NIL.Logger(this._name);
     }
     listen(evt, eventCallback) {
-        console.log(`listening ${evt}`);
+        logger.info(`${this._name.bgMagenta} listening ${evt}`);
         let id = NIL.EventManager.listen(this._name, evt, eventCallback);
         if (typeof id == 'undefined') {
             return false;
@@ -23,6 +23,9 @@ class Plugin {
             this._EventIDs.push(id);
             return true;
         }
+    }
+    addEvent(name){
+        NIL.EventManager.addEvent(this._name,name);
     }
     unload() {
         this._EventIDs.forEach(NIL.EventManager.remCallback);
