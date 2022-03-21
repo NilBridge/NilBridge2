@@ -15,31 +15,46 @@ checkFile('config.json',JSON.stringify({
     check:'查服',
     auto_wl:false,
     auto_rename:true,
-    auto_remove:true
+    auto_remove:true,
+    group:{
+        main:114514,
+        chat:114514
+    }
 },null,'\t'));
 
 const cfg = JSON.parse(NIL.IO.readFrom(path.join(__dirname,'config.json')));
 
 module.exports = {
     onStart(api) {
-        api.listen('onWebsocketConnected', (data) => {
-            if (data.server == 'aaa') {
-                NIL.SERVERS.get(data.server).sendCMD('list', (dt) => {
-                    api.logger.info(`get callback!!`);
-                    NIL.bot.sendMainMessage(dt);
-                });
-            }
-        });
+        api.addEvent('onMainMessageReceived');
+        api.addEvent('onChatMessageReceived');
+        api.addEvent('onMemberBind');
+        api.addEvent('onMemberUnbind');
+        api.addEvent('onServerStart');
+        api.addEvent('onServerStop');
+        api.addEvent('onPlayerJoin');
+        api.addEvent('onPlayerLeft');
         api.listen('onWebsocketReceived', (dt) => {
             let data = JSON.parse(dt.message);
+            switch(data.cause){
+                case 'join':
+                    break;
+                case 'left':
+                    break;
+                case 'server_start':
+                    break;
+                case 'server_stop':
+                    break;
+            }
         });
-        api.listen('onMainMessageReceived',(e)=>{
-            let text = getText(e.message);
-
-            if(e.message[0].text == '查服'){
-                NIL.SERVERS.forEach((v,k)=>{
-                    v.sendCMD('list',e.reply);
-                });
+        api.listen('onGroupMessageReceived',(e)=>{
+            switch(e.group.id){
+                case cfg.group.main:
+                    NIL.EventManager.on('onMainMessageReceived',e);
+                    break;
+                case cfg.group.chat:
+                    NIL.EventManager.on('onChatMessageReceived',e);
+                    break;
             }
         });
     },
@@ -60,10 +75,10 @@ function getText(e){
 }
 
 function group_main(e){
-    if(e.group_id != NIL.CONFIG.GROUP_MAIN)return;
-    const pt = NIL.TOOL.GetPlainText(e).split(' ');
+    let text = getText(e.message);
     switch(pt[0]){
         case "查服":
+
             break;
         case "/cmd":
             if(NIL.CONFIG.ADMIN.indexOf(e.sender.user_id)==-1){

@@ -68,3 +68,9 @@ NIL.NBCMD = {
     remUserCmd,
     run_cmd,
 }
+
+regUserCmd('help','帮助列表',(arg)=>{
+    user_cmds.forEach((v,k)=>{
+        logger.info(`${k} - ${v.desc}`);
+    });
+});

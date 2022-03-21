@@ -13,6 +13,15 @@ function addEvent(plname,evt){
     }
 }
 
+function remEvent(evt){
+    if(Events[evt]==undefined){
+        return false;
+    }else{
+        delete Events[evt];
+        return true;
+    }
+}
+
 function on(evt,parmas){
     if(Events[evt]==undefined){
         logger.warn('no such event : '+evt);
@@ -25,7 +34,7 @@ function on(evt,parmas){
         try{
             tmp.callback(parmas);
         }catch(err){
-            logger.warn(`callback failed when event callback, at plugin : ${tmp.plugin.bgRed}, at event ${evt.bgYellow}`);
+            logger.warn(`callback failed, at plugin : ${tmp.plugin.bgRed}, at event ${evt.bgYellow}`);
             logger.error(err);
         }
     }
@@ -80,5 +89,6 @@ NIL.EventManager = {
     listen,
     on,
     addEvent,
+    remEvent,
     remCallback
 }

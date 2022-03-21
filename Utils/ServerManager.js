@@ -57,6 +57,9 @@ class SERVER {
     sendText(text){
         this._ws.send(helper.GetSendTextPack(this._k,this._iv,text));
     }
+    sendCustomPack(pack){
+        this._ws.send(helper.GetEncryptPack(this._k,this._iv,pack));
+    }
 }
 
 function onmessage(name,k,iv){
@@ -68,7 +71,7 @@ function onmessage(name,k,iv){
 NIL.EventManager.listen('MAIN','onWebsocketReceived',(dt)=>{
     let data = JSON.parse(dt.message);
     if(callbacks[data.params.id] != undefined){
-        callbacks[data.params.id](data.params.result);
+        callbacks[data.params.id](data);
         delete callbacks[data.params.id];
     }
 });

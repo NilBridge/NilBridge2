@@ -6,7 +6,7 @@ require('./Utils/EventManager');
 require('./Utils/FileSystem');
 if(NIL.IO.exists('./Data')==false)NIL.IO.createDir('./Data');
 require('./Utils/ServerManager');
-//require('./Utils/QQManager');
+require('./Utils/QQManager');
 require('./Utils/ModulesManager');
 NIL.EventManager.on('onServerStart');
 const readline = require('readline');
@@ -19,21 +19,12 @@ const rl = readline.createInterface({
 rl.on('line',(input)=>{
     switch(input){
         case 'stop':
-            NIL.bot.logout();
+            NIL.bots.logoutAll();
             process.exit();
-        case 'plunload':
-            NIL.modulesManager.unloadAll();
-            //NIL.modulesManager.loadAll();
-            break;
-            case 'plload':
-            NIL.modulesManager.loadAll();
-            break;
         default:
             NIL.NBCMD.run_cmd(input,(err,cb)=>{
                 if(err){
                     logger.warn(err);
-                }else{
-                    logger.info(cb);
                 }
             });
             break;

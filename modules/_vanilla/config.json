@@ -7,5 +7,9 @@
 	"check": "查服",
 	"auto_wl": false,
 	"auto_rename": true,
-	"auto_remove": true
+	"auto_remove": true,
+	"group": {
+		"main": 1020160254,
+		"chat": 1020160254
+	}
 }

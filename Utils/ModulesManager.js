@@ -13,6 +13,7 @@ class Plugin {
         this._name = name;
         this._EventIDs = [];
         this._Cmds = [];
+        this._regEvents = [];
         this._logger = new NIL.Logger(this._name);
     }
     listen(evt, eventCallback) {
@@ -26,6 +27,7 @@ class Plugin {
         }
     }
     addEvent(name){
+        this._regEvents.push(name);
         NIL.EventManager.addEvent(this._name,name);
     }
     unload() {
@@ -34,6 +36,7 @@ class Plugin {
         }catch(err){
             this._logger.error(err);
         }
+        this._regEvents.forEach(NIL.EventManager.remEvent);
         this._Cmds.forEach(NIL.NBCMD.remUserCmd);
         this._EventIDs.forEach(NIL.EventManager.remCallback);
         var pt = path.join(__dirname, '../modules', this._name);
@@ -76,11 +79,14 @@ function unloadAll() {
 }
 
 function unload(name) {
-    if (modules[name] == undefined) return false;
-    logger.info(`loadinging ${name}`);
+    if (typeof modules[name] == 'undefined'){
+        logger.warn(`模块 [${name}] 未找到`);
+        return;
+    }
+    logger.info(`unloadinging ${name.green}`);
     modules[name].unload();
     delete modules[name];
-    logger.info(`module ${name} unload`);
+    logger.info(`module ${name.green} unload`);
     return true;
 }
 
@@ -100,6 +106,43 @@ function load(p) {
 }
 
 loadAll();
+
+NIL.NBCMD.regUserCmd('module','模块管理器',(arg)=>{
+    switch(arg[0]){
+        case 'load':
+            if(modules[arg[1]] != undefined){
+                logger.warn(`模块 [${arg[1]}] 已被加载`);
+            }else{
+                load(arg[1]);
+            }
+            break;
+        case 'unload':
+            if(modules[arg[1]] == undefined){
+                logger.warn(`模块 [${arg[1]}] 未找到`);
+            }else{
+                unload(arg[1]);
+            }
+            break;
+        case 'list':
+            for(let i in modules){
+                logger.info(i);
+            }
+            break;
+        case 'reload':
+            unloadAll();
+            loadAll();
+            break;
+        case 'help':
+            logger.info('module load <module> - 加载一个模块');
+            logger.info('module unload <module> - 卸载一个模块');
+            logger.info('module reload - 重新加载所有模块');
+            logger.info('module list - 列出所有装载的模块');
+            break;
+        default:
+            logger.warn('指令参数不足，键入module help查看命令');
+            break;
+    }
+});
 
 NIL.modulesManager = {
     unloadAll,
