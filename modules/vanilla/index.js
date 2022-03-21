@@ -39,20 +39,24 @@ module.exports = {
         api.addEvent('onServerStop');
         api.addEvent('onPlayerJoin');
         api.addEvent('onPlayerLeft');
+        api.addEvent('onPlayerChat');
         api.listen('onWebsocketReceived', (dt) => {
             let data = JSON.parse(dt.message);
             switch (data.cause) {
+                case 'chat':
+                    NIL.EventManager.on('onPlayerChat', data.params);
+                    break;
                 case 'join':
-                    NIL.EventManager.on('onPlayerJoin', dt);
+                    NIL.EventManager.on('onPlayerJoin', data.params);
                     break;
                 case 'left':
-                    NIL.EventManager.on('onPlayerLeft', dt);
+                    NIL.EventManager.on('onPlayerLeft', data.params);
                     break;
                 case 'server_start':
-                    NIL.EventManager.on('onServerStart', dt);
+                    NIL.EventManager.on('onServerStart', data.params);
                     break;
                 case 'server_stop':
-                    NIL.EventManager.on('onServerStop', dt);
+                    NIL.EventManager.on('onServerStop', data.params);
                     break;
             }
         });

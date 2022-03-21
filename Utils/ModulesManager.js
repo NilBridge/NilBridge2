@@ -61,9 +61,9 @@ let modules = {};
 function loadAll() {
     var cfg = {};
     var pls = JSON.parse(fs.readFileSync('./modules/config.json', 'utf8'));
-    load('_vanilla');
+    load('vanilla');
     fs.readdirSync('./modules/').forEach(p => {
-        if (p != 'config.json' && p != '_vanilla'){
+        if (p != 'config.json' && p != 'vanilla'){
             try {
                 if(pls[p]==false)return;        
                 cfg[p] = load(p);

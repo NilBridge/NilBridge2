@@ -10,16 +10,17 @@ function readFrom(path, encoding = 'utf8') {
         return fs.readFileSync(path, { encoding });
     } catch (err) {
         logger.error(err);
-        return '';
+        return null;
     }
 }
 
 function WriteTo(path, data, encoding = 'utf8') {
     try {
         fs.writeFileSync(path, data, { encoding });
+        return true;
     } catch (err) {
         logger.error(err);
-        return '';
+        return  false;
     }
 }
 

@@ -1,0 +1,17 @@
+{
+	"bind": "/bind",
+	"cmd": "/cmd",
+	"unbind": "/unbind",
+	"add_wl": "wl+",
+	"rem_wl": "wl-",
+	"check": "查服",
+	"nbcmd":"/nbcmd",
+	"auto_wl": false,
+	"auto_rename": true,
+	"auto_remove": true,
+	"admins":[2959435045],
+	"group": {
+		"main": 1020160254,
+		"chat": 925057221
+	}
+}
