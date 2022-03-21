@@ -1,4 +1,5 @@
 # Logs
+/modules/_vanilla/config.json
 push.bat
 Data/
 logs
