@@ -20,8 +20,11 @@ rl.on('line',(input)=>{
         case 'stop':
             NIL.bot.logout();
             process.exit();
-        case 'plreload':
+        case 'plunload':
             NIL.modulesManager.unloadAll();
+            //NIL.modulesManager.loadAll();
+            break;
+            case 'plload':
             NIL.modulesManager.loadAll();
             break;
     }

@@ -28,6 +28,11 @@ class Plugin {
         NIL.EventManager.addEvent(this._name,name);
     }
     unload() {
+        try{
+            this._module.onStop();
+        }catch(err){
+            this._logger.error(err);
+        }
         this._EventIDs.forEach(NIL.EventManager.remCallback);
         var pt = path.join(__dirname, '../modules', this._name);
         delete require.cache[require.resolve(pt)];
@@ -58,13 +63,16 @@ function loadAll() {
 
 function unloadAll() {
     for (let pl in modules) {
-        modules[pl].unload();
+        unload(pl);
     }
 }
 
 function unload(name) {
     if (modules[name] == undefined) return false;
+    logger.info(`loadinging ${name}`);
     modules[name].unload();
+    delete modules[name];
+    logger.info(`module ${name} unload`);
     return true;
 }
 

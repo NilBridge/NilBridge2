@@ -13,9 +13,11 @@ module.exports = class{
         this.ws.on('connect',(con)=>{
             this.con = con;
             this._ifAlive= true;
+            this._logger.info('connect!');
             NIL.EventManager.on('onWebsocketConnected',{server:this.name});
             con.on('close',(code,desc)=>{
                 this._ifAlive= false;
+                this._logger.warn('connect lost!!');
                 NIL.EventManager.on('onWebsocketClosed',{server:this.name});
                 this._logger.warn(`connect lost with code ${code}(${desc}), restart connect in ${(this._reConnectTime/1000).toFixed(1)} seconds`);
                 setTimeout(()=>{
