@@ -1,4 +1,24 @@
 const dbhelper = require('./leveldb');
+const path = require('path');
+function checkFile(file,text){
+    if(NIL.IO.exists(path.join(__dirname,file))==false){
+        NIL.IO.WriteTo(path.join(__dirname,file),text);
+    }
+}
+
+checkFile('config.json',JSON.stringify({
+    bind:'/bind',
+    cmd:'/cmd',
+    unbind:'/unbind',
+    add_wl:'wl+',
+    rem_wl:'wl-',
+    check:'查服',
+    auto_wl:false,
+    auto_rename:true,
+    auto_remove:true
+},null,'\t'));
+
+const cfg = JSON.parse(NIL.IO.readFrom(path.join(__dirname,'config.json')));
 
 module.exports = {
     onStart(api) {
@@ -14,6 +34,8 @@ module.exports = {
             let data = JSON.parse(dt.message);
         });
         api.listen('onMainMessageReceived',(e)=>{
+            let text = getText(e.message);
+
             if(e.message[0].text == '查服'){
                 NIL.SERVERS.forEach((v,k)=>{
                     v.sendCMD('list',e.reply);
@@ -36,6 +58,7 @@ function getText(e){
     }
     return rt;
 }
+
 function group_main(e){
     if(e.group_id != NIL.CONFIG.GROUP_MAIN)return;
     const pt = NIL.TOOL.GetPlainText(e).split(' ');

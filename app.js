@@ -1,11 +1,12 @@
 global.NIL = {};
 require('./Utils/Logger');
 var logger = new NIL.Logger('Main');
+require('./Utils/CMDManager');
 require('./Utils/EventManager');
 require('./Utils/FileSystem');
 if(NIL.IO.exists('./Data')==false)NIL.IO.createDir('./Data');
 require('./Utils/ServerManager');
-require('./Utils/QQManager');
+//require('./Utils/QQManager');
 require('./Utils/ModulesManager');
 NIL.EventManager.on('onServerStart');
 const readline = require('readline');
@@ -26,6 +27,15 @@ rl.on('line',(input)=>{
             break;
             case 'plload':
             NIL.modulesManager.loadAll();
+            break;
+        default:
+            NIL.NBCMD.run_cmd(input,(err,cb)=>{
+                if(err){
+                    logger.warn(err);
+                }else{
+                    logger.info(cb);
+                }
+            });
             break;
     }
 });

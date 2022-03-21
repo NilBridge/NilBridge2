@@ -1,0 +1,11 @@
+{
+	"bind": "/bind",
+	"cmd": "/cmd",
+	"unbind": "/unbind",
+	"add_wl": "wl+",
+	"rem_wl": "wl-",
+	"check": "查服",
+	"auto_wl": false,
+	"auto_rename": true,
+	"auto_remove": true
+}

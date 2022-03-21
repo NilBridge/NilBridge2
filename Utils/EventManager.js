@@ -68,7 +68,7 @@ function remCallback(id){
 
 function listen(plname,evt,callback){
     if(Events[evt]==undefined){
-        logger.warn(`no such event : ${evt.bgRed}, ${plname} listen failed`);
+        logger.warn(`no such event : ${evt.bgRed}, ${plname.bgYellow} listen failed`);
         return;
     }
     return addCallback(plname,evt,callback);

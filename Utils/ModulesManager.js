@@ -12,6 +12,7 @@ class Plugin {
         this._module = module;
         this._name = name;
         this._EventIDs = [];
+        this._Cmds = [];
         this._logger = new NIL.Logger(this._name);
     }
     listen(evt, eventCallback) {
@@ -33,9 +34,17 @@ class Plugin {
         }catch(err){
             this._logger.error(err);
         }
+        this._Cmds.forEach(NIL.NBCMD.remUserCmd);
         this._EventIDs.forEach(NIL.EventManager.remCallback);
         var pt = path.join(__dirname, '../modules', this._name);
         delete require.cache[require.resolve(pt)];
+    }
+    regCMD(cmd,desc,callback){
+        if(NIL.NBCMD.regUserCmd(cmd,desc,callback)){
+            this._Cmds.push(cmd);
+            return true;
+        }
+        return false;
     }
     get logger() {
         return this._logger;
@@ -50,9 +59,8 @@ function loadAll() {
     fs.readdirSync('./modules/').forEach(p => {
         if (p != 'config.json'){
             try {
-                if(pls[p]==false)return;
-                load(p);
-                cfg[p] = true;
+                if(pls[p]==false)return;        
+                cfg[p] = load(p);
             } catch (err) {
                 logger.error(err);
             }
@@ -79,9 +87,16 @@ function unload(name) {
 function load(p) {
     var pt = path.join(__dirname, '../modules', p);
     logger.info(`loading ${p}`);
-    var part = require(pt);
-    modules[p] = new Plugin(p.split(".")[0], part);
-    part.onStart(modules[p]);
+    try{
+        var part = require(pt);
+        modules[p] = new Plugin(p.split(".")[0], part);
+        part.onStart(modules[p]);
+        return true;
+    }catch(err){
+        logger.error(err);
+        return false;
+    }
+
 }
 
 loadAll();
