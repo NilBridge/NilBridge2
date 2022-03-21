@@ -219,6 +219,10 @@ function group_main(e) {
                             wl_add(e.sender.qq, xbox);
                             if (cfg.auto_rename) e.member.setCard(xbox);
                             e.reply(langhelper.get('MEMBER_BIND_SUCCESS', xbox), true);
+                            if(cfg.auto_wl){
+                                RuncmdAll(`whitelist remove "${xbox}"`);
+                                e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, xbox));
+                            }
                         }
                     })
                 }
@@ -229,10 +233,10 @@ function group_main(e) {
                 if (has==false) {
                     e.reply(langhelper.get('MEMBER_NOT_BIND'), true);
                 } else {
-                    var xbox = get_xboxid(e.sender.qq, (err, id) => {
+                    get_xboxid(e.sender.qq, (err, id) => {
                         wl_remove(e.sender.qq);
                         e.reply(langhelper.get('MEMBER_UNBIND'), true);
-                        RuncmdAll(`whitelist remove "${xbox}"`);
+                        RuncmdAll(`whitelist remove "${id}"`);
                         e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, id));
                     });
                 }
