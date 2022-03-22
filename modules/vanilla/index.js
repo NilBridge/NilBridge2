@@ -90,7 +90,7 @@ var GetFormatText = function(e){
                 rt+= langhelper.get('MESSAGE_AT',e.message[i].text);
                 break;
             case"image":
-                rt+= NIL.LANG.get("MESSAGE_IMAGE");
+                rt+= langhelper.get("MESSAGE_IMAGE");
                 break;
             case"text":
                 rt+= e.message[i].text;
