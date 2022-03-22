@@ -44,30 +44,30 @@ module.exports = {
             let data = JSON.parse(dt.message);
             switch (data.cause) {
                 case 'chat':
-                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(langhelper.get('MEMBER_CHAT',dt.server,data.params.sender,data.params.text));
+                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat,langhelper.get('MEMBER_CHAT',dt.server,data.params.sender,data.params.text));
                     send2Other(dt.server,data.cause,data.params.sender.data.params.text);
                     NIL.EventManager.on('onPlayerChat', dt);
                     break;
                 case 'join':
-                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(langhelper.get('MEMBER_JOIN',dt.server,data.params.sender));
+                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat,langhelper.get('MEMBER_JOIN',dt.server,data.params.sender));
                     send2Other(dt.server,data.cause,data.params.sender);
                     NIL.EventManager.on('onPlayerJoin', dt);
                     break;
                 case 'left':
-                    NLI.bots.getBot(cfg.self_id).sendGroupMsg(langhelper.get('MEMBER_LEFT',dt.server,data.params.sender));
+                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat,langhelper.get('MEMBER_LEFT',dt.server,data.params.sender));
                     send2Other(dt.server,data.cause,data.params.sender);
                     NIL.EventManager.on('onPlayerLeft', dt);
                     break;
                 case 'server_start':
-                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(langhelper.get("SERVER_START",dt.server));
+                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main,langhelper.get("SERVER_START",dt.server));
                     NIL.EventManager.on('onServerStart', dt);
                     break;
                 case 'server_stop':
-                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(langhelper.get("SERVER_STOP",dt.server));
+                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main,langhelper.get("SERVER_STOP",dt.server));
                     NIL.EventManager.on('onServerStop', dt);
                     break;
                 case 'plantext':
-                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(data.params.text);
+                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main,data.params.text);
                     break;
             }
         });
@@ -219,8 +219,10 @@ function group_main(e) {
     let pt = text.split(' ');
     switch (pt[0]) {
         case cfg.check:
-            NIL.SERVERS.forEach(s => {
-                s.sendCMD('list', e.reply);
+            NIL.SERVERS.forEach((s,n) => {
+                s.sendCMD('list', (re)=>{
+                    e.reply(`${n}\n${re}`);
+                });
             });
             break;
         case cfg.cmd:

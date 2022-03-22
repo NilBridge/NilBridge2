@@ -167,7 +167,7 @@ NIL.NBCMD.regUserCmd('qq', 'QQ机器人模块', (arg) => {
 });
 
 function getBot(qq){
-    return Clients.get(qq);
+    return Clients.get(qq.toString());
 }
 
 function logout(qq){
