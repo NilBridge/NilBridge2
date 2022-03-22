@@ -9,9 +9,12 @@
 	"auto_wl": false,
 	"auto_rename": true,
 	"auto_remove": true,
-	"admins":[2959435045],
+	"admins":[
+		2959435045
+	],
 	"group": {
 		"main": 1020160254,
 		"chat": 925057221
-	}
+	},
+	"self_id":2837945976
 }

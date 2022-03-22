@@ -16,7 +16,6 @@ function GUID() {
 * @param k 加密密匙
 * @param iv 加密偏移量
 * @param cmd 要执行的命令
-* @param ifback 是否发送反馈到群聊
 */
 function GetRuncmdPack(k,iv,cmd,id = GUID()){
     var p = {
