@@ -66,6 +66,7 @@ module.exports = {
                 NIL.EventManager.on('onMainMessageReceived', e);
             }
             if (e.group.id == cfg.group.chat) {
+                onChat(e);
                 NIL.EventManager.on('onChatMessageReceived', e);
             }
 
@@ -76,6 +77,33 @@ module.exports = {
 
     }
 }
+
+var GetFormatText = function(e){
+    var rt = '';
+    for(i in e.message){
+        switch(e.message[i].type){
+            case "at":
+                if(e.message[i].qq.toString() == 'all'){
+                    rt+=langhelper.get("MESSAGE_AT_ALL");
+                    continue;
+                }
+                rt+= langhelper.get('MESSAGE_AT',e.message[i].text);
+                break;
+            case"image":
+                rt+= NIL.LANG.get("MESSAGE_IMAGE");
+                break;
+            case"text":
+                rt+= e.message[i].text;
+                break;
+        }
+    }
+    return rt;
+}
+
+function onChat(e){
+    SendTextAll(langhelper.get('GROUP_MEMBER_CHAT',e.sender.nick,GetFormatText(e)));
+}
+
 function getText(e) {
     var rt = '';
     for (i in e.message) {
@@ -89,14 +117,18 @@ function getText(e) {
 }
 
 function wl_remove(qq){
-    dbhelper.del(qq,(err)=>{
-
-    })
+    dbhelper.del(qq,(err)=>{});
 }
 
 function RuncmdAll(cmd,self) {
     NIL.SERVERS.forEach(s => {
         s.sendCMD(cmd, (dt) => {NIL.bots.getBot(self).sendGroupMsg(cfg.group.main,dt)});
+    });
+}
+
+function SendTextAll(text) {
+    NIL.SERVERS.forEach(s => {
+        s.sendText(text);
     });
 }
 
