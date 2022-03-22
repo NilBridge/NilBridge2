@@ -44,19 +44,19 @@ module.exports = {
             let data = JSON.parse(dt.message);
             switch (data.cause) {
                 case 'chat':
-                    NIL.EventManager.on('onPlayerChat', data.params);
+                    NIL.EventManager.on('onPlayerChat', dt);
                     break;
                 case 'join':
-                    NIL.EventManager.on('onPlayerJoin', data.params);
+                    NIL.EventManager.on('onPlayerJoin', dt);
                     break;
                 case 'left':
-                    NIL.EventManager.on('onPlayerLeft', data.params);
+                    NIL.EventManager.on('onPlayerLeft', dt);
                     break;
                 case 'server_start':
-                    NIL.EventManager.on('onServerStart', data.params);
+                    NIL.EventManager.on('onServerStart', dt);
                     break;
                 case 'server_stop':
-                    NIL.EventManager.on('onServerStop', data.params);
+                    NIL.EventManager.on('onServerStop', dt);
                     break;
             }
         });
