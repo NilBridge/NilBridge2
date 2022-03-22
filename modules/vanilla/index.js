@@ -82,7 +82,13 @@ module.exports = {
             }
 
         });
-        NIL._vanilla = cfg;
+        NIL._vanilla = {
+            cfg:cfg,
+            wl_add,
+            wl_exists,
+            wl_remove,
+            get_xboxid
+        };
     },
     onStop() {}
 }
