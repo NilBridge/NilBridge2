@@ -95,6 +95,7 @@ module.exports = {
             wl_remove,
             get_xboxid,
             get_player,
+            add_time,
             isAdmin
         };
     },
