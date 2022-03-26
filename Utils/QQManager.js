@@ -4,6 +4,7 @@ const logger = new NIL.Logger("QQManager");
 NIL.EventManager.addEvent('QQManager', 'onRotboOnline');
 NIL.EventManager.addEvent('QQManager', 'onGroupMessageReceived');
 NIL.EventManager.addEvent('QQManager', 'onFriendMessageReceived');
+NIL.EventManager.addEvent('QQManager','onGroupMemberLeft');
 if (NIL.IO.exists('./Data/QQ.json') == false) {
     NIL.IO.WriteTo('./Data/QQ.json', '[]');
 }
@@ -21,40 +22,26 @@ function AddConfig(qq){
 }
 
 function addClient(qq) {
-    const client = createClient(qq, {//机器人内部配置
-        platform: 2,//QQ登录协议。1:安卓手机 2:安卓平板 3:安卓手表 4:MacOS 5:iPad
-        kickoff: false,
-        ignore_self: true,
-        resend: true,
-        brief: true
-    });
+    const client = createClient(qq, {platform: 2,kickoff: false,ignore_self: true,resend: true,brief: true});
     Clients.set(qq,client);
     client.on("system.login.qrcode", function (e) {
         process.stdin.once("data", (e) => {
             this.login();
     });
     }).login();
-    client.on("system.online", () => {
-        logger.info(qq,'登陆成功！');
-        NIL.EventManager.on('onRotboOnline', {qq});
-    });
+    addOnEvent(client,qq);
+}
+
+function addOnEvent(client,qq){
+    client.on("system.online",getOnRobotOnline(qq));
     client.on('message.group', getOnMessage(qq));
+    client.on('notice.group.decrease',getOnMemeberLeft());
 }
 
 function autoLogin(qq,pwd,platform,qrcode=true){
-    const client = createClient(qq, {//机器人内部配置
-        platform,
-        kickoff: false,
-        ignore_self: true,
-        resend: true,
-        brief: true
-    });
-    client.on("system.online", () => {
-        logger.info(qq,'登陆成功！');
-        NIL.EventManager.on('onRotboOnline', {qq});
-    });
+    const client = createClient(qq, {platform,kickoff: false,ignore_self: true,resend: true,brief: true});
     Clients.set(qq,client);
-    client.on('message.group', getOnMessage(qq));
+    addOnEvent(client,qq);
     if(qrcode){
         client.on("system.login.qrcode", function (e) {
             process.stdin.once("data", (e) => {
@@ -110,6 +97,19 @@ function getOnMessage(qq){
     return (e)=>{
         let obj = getEventObj(e,qq);
         NIL.EventManager.on('onGroupMessageReceived', obj);
+    }
+}
+
+function getOnMemeberLeft(){
+    return (e)=>{
+        NIL.EventManager.on('onGroupMemberLeft',e);
+    }
+}
+
+function getOnRobotOnline(qq){
+    return ()=>{
+        logger.info(qq,'登陆成功！');
+        NIL.EventManager.on('onRotboOnline', {qq});
     }
 }
 

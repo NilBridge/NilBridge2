@@ -95,6 +95,7 @@ module.exports = {
 
         });
         api.listen('onNilBridgeStop', save_playerdata);
+        api.listen('onGroupMemberLeft',onLeft);
         NIL._vanilla = {
             cfg: cfg,
             wl_add,
@@ -151,6 +152,16 @@ var GetFormatText = function (e) {
         }
     }
     return rt;
+}
+
+function onLeft(e){
+    if(e.group_id == cfg.group.main && e.self_id == cfg.self_id){
+        if (wl_exists(e.user_id)) {
+            NIL.bots.getBot(cfg.self_id).sendGroupMsg(langhelper.get('MEMBER_LEFT_GROUP', get_xboxid(e.user_id)))
+            RuncmdAll(`allowlist remove "${get_xboxid(e.user_id)}"`);
+            wl_remove(e.user_id);
+          }
+    }
 }
 
 function onChat(e) {
