@@ -49,13 +49,13 @@ module.exports = {
             switch (data.cause) {
                 case 'chat':
                     NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_CHAT', dt.server, data.params.sender, data.params.text));
-                    send2Other(dt.server, data.cause, data.params.sender.data.params.text);
+                    send2Other(dt.server, data.cause, data.params.sender,data.params.text);
                     NIL.EventManager.on('onPlayerChat', dt);
                     break;
                 case 'join':
                     add_time(data.params.sender,0,1);
-                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_JOIN', dt.server, data.params.sender));
-                    send2Other(dt.server, data.cause, data.params.sender,playerdata[data.cause, data.params.sender].join);
+                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_JOIN', dt.server, data.params.sender,playerdata[get_qq(data.params.sender)].join));
+                    send2Other(dt.server, data.cause, data.params.sender);
                     NIL.EventManager.on('onPlayerJoin', dt);
                     break;
                 case 'left':
@@ -215,13 +215,14 @@ function wl_add(qq, xboxid) {
 }
 
 function add_time(xboxid,mode,time){
-    if(!get_qq(xboxid))return;
+    let qq = get_qq(xboxid);
+    if(qq==undefined)return;
     switch(mode){
         case 0:
-            playerdata[get_qq(xboxid)].join += time;
+            playerdata[qq].join += time;
             break;
         case 1:
-            playerdata[get_qq(xboxid)].period += time;
+            playerdata[qq].period += time;
             break;
     }
 }

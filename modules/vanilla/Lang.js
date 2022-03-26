@@ -3,20 +3,6 @@ const fs = require('fs');
 
 var lang = {};
 
-/**
- * 原型：字符串格式化
- * @param args 格式化参数值
- */
-var format = function(result,args) {
-	for (var key in args) {
-		var value = args[key];
-		if (value) {
-			result = result.replace("{" + key + "}", value);
-		}
-	}
-	return result;
-}
-
 function isNullorEmpty(str){
     if(str.trim() == "") return true;
     if(str == null) return true;
@@ -36,13 +22,12 @@ var set = function(k,v){
  * 获取格式化的语言字符串
  */
 var get = function(){
-    if(lang[arguments[0]] == undefined) return arguments[0];
-    var gs = {};
-    for(i=1;i<arguments.length;i++){
-        gs[(i-1).toString()] = arguments[i];
+    let args = Object.values(arguments);
+    let text = lang[args[0]];
+    for(i=0;i<args.length-1;i++){
+        text = text.replace(`{${i}}`,args[i+1]);
     }
-    if(Object.keys(gs).length ==0) return lang[arguments[0]];
-    return format(lang[arguments[0]],gs);
+    return text;
 }
 /**
  * 装载Lang文件

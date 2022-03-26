@@ -36,9 +36,3 @@ NIL.NBCMD.regUserCmd('stop','关闭NilBridge',()=>{
 process.on('unhandledRejection', (reason, promise) => {
 	console.log(reason,promise);
 });
-
-let time1 = new Date().getTime();
-
-setTimeout(() => {
-    console.log(new Date().getTime() - time1);
-}, 3000);
