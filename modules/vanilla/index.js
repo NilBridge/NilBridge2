@@ -33,6 +33,8 @@ function save_playerdata() {
     NIL.IO.WriteTo(path.join(__dirname, 'playerdata.json'), JSON.stringify(playerdata, null, '\t'));
 }
 
+let times = new Map();
+
 module.exports = {
     onStart(api) {
         api.addEvent('onMainMessageReceived');
@@ -53,6 +55,7 @@ module.exports = {
                     NIL.EventManager.on('onPlayerChat', dt);
                     break;
                 case 'join':
+                    times.set(data.params.sender,new Date().getTime());
                     add_time(data.params.sender,0,1);
                     NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_JOIN', dt.server, data.params.sender,playerdata[get_qq(data.params.sender)].join));
                     send2Other(dt.server, data.cause, data.params.sender);
@@ -62,6 +65,10 @@ module.exports = {
                     NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_LEFT', dt.server, data.params.sender));
                     send2Other(dt.server, data.cause, data.params.sender);
                     NIL.EventManager.on('onPlayerLeft', dt);
+                    if(times.has(data.params.sender)){
+                        add_time(data.params.sender,1,new Date().getTime() - times.get(data.params.sender));
+                        times.delete(data.params.sender);
+                    }
                     break;
                 case 'server_start':
                     NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_START", dt.server));
@@ -96,6 +103,7 @@ module.exports = {
             get_xboxid,
             get_player,
             get_qq,
+            xbox_exists,
             add_time,
             isAdmin
         };
@@ -299,11 +307,11 @@ function group_main(e) {
                 e.reply(langhelper.get('COMMAND_OVERLOAD_NOTFIND'), true);
                 return;
             }
-            if (wl_exists(e.sender.qq)) {
+            var xbox = text.substring(cfg.bind.length + 1);
+            if (xbox_exists(xbox)) {
                 let id = get_xboxid(e.sender.qq);
                 e.reply(langhelper.get('MEMBER_ALREADY_IN_WHITELIST', id), true);
             } else {
-                var xbox = text.substring(cfg.bind.length + 1);
                 if (xbox_exists(xbox)) {
                     e.reply(langhelper.get('XBOXID_ALREADY_BIND'), true);
                 } else {
