@@ -95,7 +95,9 @@ module.exports = {
 
         });
         api.listen('onNilBridgeStop', save_playerdata);
-        api.listen('onGroupMemberLeft',onLeft);
+        if(cfg.auto_remove){
+            api.listen('onGroupMemberLeft',onLeft);
+        }
         NIL._vanilla = {
             cfg: cfg,
             wl_add,
