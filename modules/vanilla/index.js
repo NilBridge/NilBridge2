@@ -55,7 +55,7 @@ module.exports = {
                 case 'join':
                     add_time(data.params.sender,0,1);
                     NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_JOIN', dt.server, data.params.sender));
-                    send2Other(dt.server, data.cause, data.params.sender);
+                    send2Other(dt.server, data.cause, data.params.sender,playerdata[data.cause, data.params.sender].join);
                     NIL.EventManager.on('onPlayerJoin', dt);
                     break;
                 case 'left':
@@ -95,6 +95,7 @@ module.exports = {
             wl_remove,
             get_xboxid,
             get_player,
+            get_qq,
             add_time,
             isAdmin
         };
@@ -214,7 +215,7 @@ function wl_add(qq, xboxid) {
 }
 
 function add_time(xboxid,mode,time){
-    if(!get_qq(xbox))return;
+    if(!get_qq(xboxid))return;
     switch(mode){
         case 0:
             playerdata[get_qq(xboxid)].join += time;
@@ -260,7 +261,7 @@ function group_main(e) {
                 NIL.SERVERS.forEach((s, k) => {
                     e.reply(langhelper.get("COMMAND_SENDTO_SERVER", cmd, k), true);
                     s.sendCMD(cmd, (dt) => {
-                        e.reply(dt);
+                        e.reply(`${k}\n${dt}`);
                     });
                 });
             }
