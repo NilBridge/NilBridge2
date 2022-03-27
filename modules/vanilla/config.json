@@ -17,5 +17,7 @@
 		"main": 1020160254,
 		"chat": 1020160254
 	},
-	"self_id":2837945976
+	"self_id":2837945976,
+	"onMain":true,
+    "onChat":true
 }

@@ -1,5 +1,6 @@
-const langhelper = require('./Lang');
-langhelper.init();
+const Lang = require('./Lang');
+const langhelper = new Lang('lang.ini');
+
 const path = require('path');
 function checkFile(file, text) {
     if (NIL.IO.exists(path.join(__dirname, file)) == false) {
@@ -23,8 +24,13 @@ checkFile('config.json', JSON.stringify({
         main: 114514,
         chat: 114514
     },
-    admins: []
+    admins: [],
+    onMain:true,
+    onChat:true
 }, null, '\t'));
+
+const onChat = require('./onChat');
+const onMain = require('./onMain');
 
 let playerdata = JSON.parse(NIL.IO.readFrom(path.join(__dirname, 'playerdata.json')))
 const cfg = JSON.parse(NIL.IO.readFrom(path.join(__dirname, 'config.json')));
@@ -85,11 +91,11 @@ module.exports = {
         });
         api.listen('onGroupMessageReceived', (e) => {
             if (cfg.group.main == e.group.id) {
-                group_main(e);
+                if(cfg.onMain) onMain(e);
                 NIL.EventManager.on('onMainMessageReceived', e);
             }
             if (e.group.id == cfg.group.chat) {
-                onChat(e);
+                if(cfg.onChat) onChat(e);
                 NIL.EventManager.on('onChatMessageReceived', e);
             }
 
@@ -135,28 +141,6 @@ function send2Other(ser, mode, pl, t) {
     });
 }
 
-var GetFormatText = function (e) {
-    var rt = '';
-    for (i in e.message) {
-        switch (e.message[i].type) {
-            case "at":
-                if (e.message[i].qq.toString() == 'all') {
-                    rt += langhelper.get("MESSAGE_AT_ALL");
-                    continue;
-                }
-                rt += langhelper.get('MESSAGE_AT', e.message[i].text);
-                break;
-            case "image":
-                rt += langhelper.get("MESSAGE_IMAGE");
-                break;
-            case "text":
-                rt += e.message[i].text;
-                break;
-        }
-    }
-    return rt;
-}
-
 function onLeft(e){
     if(e.group_id == cfg.group.main && e.self_id == cfg.self_id){
         if (wl_exists(e.user_id)) {
@@ -167,36 +151,13 @@ function onLeft(e){
     }
 }
 
-function onChat(e) {
-    let xbox = get_xboxid(e.sender.qq);
-    SendTextAll(langhelper.get('GROUP_MEMBER_CHAT',xbox == undefined? e.sender.nick:xbox, GetFormatText(e)));
-}
-
-function getText(e) {
-    var rt = '';
-    for (i in e.message) {
-        switch (e.message[i].type) {
-            case "text":
-                rt += e.message[i].text;
-                break;
-        }
-    }
-    return rt;
-}
-
 function wl_remove(qq) {
     delete playerdata[qq];
 }
 
 function RuncmdAll(cmd, self) {
     NIL.SERVERS.forEach((s, k) => {
-        s.sendCMD(cmd, (dt) => { NIL.bots.getBot(self).sendGroupMsg(cfg.group.main, dt) });
-    });
-}
-
-function SendTextAll(text) {
-    NIL.SERVERS.forEach((s, k) => {
-        s.sendText(text);
+        s.sendCMD(cmd, (dt) => { NIL.bots.getBot(self).sendGroupMsg(cfg.group.main, `${k}\n${dt}`) });
     });
 }
 
@@ -253,141 +214,3 @@ function get_all(){
     return playerdata;
 }
 
-var getAt = function (e) {
-    var at = [];
-    for (i in e.message) {
-        switch (e.message[i].type) {
-            case "at":
-                at.push(e.message[i].qq);
-                break;
-        }
-    }
-    return at;
-};
-
-
-function group_main(e) {
-    if (e.self_id != cfg.self_id) return;
-    let text = getText(e);
-    let pt = text.split(' ');
-    switch (pt[0]) {
-        case cfg.check:
-            NIL.SERVERS.forEach((s, n) => {
-                s.sendCMD('list', (re) => {
-                    e.reply(`${n}\n${re}`);
-                });
-            });
-            break;
-        case cfg.cmd:
-            if (isAdmin(e.sender.qq) == false) {
-                e.reply(langhelper.get('MEMBER_NOT_ADMIN'));
-                return;
-            }
-            if (NIL.SERVERS.size == 1) {
-                let cmd = text.substring(cfg.cmd.length + 1);
-                NIL.SERVERS.forEach((s, k) => {
-                    e.reply(langhelper.get("COMMAND_SENDTO_SERVER", cmd, k), true);
-                    s.sendCMD(cmd, (dt) => {
-                        e.reply(`${k}\n${dt}`);
-                    });
-                });
-            }
-            else {
-                if (pt.length > 2) {
-                    if (NIL.SERVERS.has(pt[1]) == false) {
-                        e.reply(`没有名为${pt[1]}的服务器`, true);
-                        return;
-                    }
-                    e.reply(langhelper.get("COMMAND_SENDTO_SERVER", text.substring(`/cmd ${pt[1]} `.length), pt[1]), true);
-                    NIL.SERVERS.get(pt[1]).sendCMD(text.substring(`${cfg.cmd} ${pt[1]} `.length), (dt) => {
-                        e.reply(langhelper.get("CMD_FEEDBACK", pt[1], dt));
-                    });
-                } else {
-                    e.reply(langhelper.get('COMMAND_OVERLOAD_NOTFIND'), true);
-                }
-            }
-            break;
-        case cfg.nbcmd:
-            if (isAdmin(e.sender.qq) == false) {
-                e.reply(langhelper.get('MEMBER_NOT_ADMIN'), true);
-                return;
-            }
-            let cmd = text.substring(cfg.nbcmd.length + 1);
-            e.reply(`命令${cmd}已执行`, true);
-            NIL.NBCMD.run_cmd(cmd, (err, cb) => {
-                if (err) {
-                    e.reply(err.stack, true);
-                }
-            });
-            break;
-        case cfg.bind:
-            if (pt.length < 2) {
-                e.reply(langhelper.get('COMMAND_OVERLOAD_NOTFIND'), true);
-                return;
-            }
-            var xbox = text.substring(cfg.bind.length + 1);
-            if (xbox_exists(xbox)) {
-                let id = get_xboxid(e.sender.qq);
-                e.reply(langhelper.get('MEMBER_ALREADY_IN_WHITELIST', id), true);
-            } else {
-                if (xbox_exists(xbox)) {
-                    e.reply(langhelper.get('XBOXID_ALREADY_BIND'), true);
-                } else {
-                    wl_add(e.sender.qq, xbox);
-                    if (cfg.auto_rename) e.member.setCard(xbox);
-                    e.reply(langhelper.get('MEMBER_BIND_SUCCESS', xbox), true);
-                    if (cfg.auto_wl) {
-                        RuncmdAll(`whitelist remove "${xbox}"`, e.self_id);
-                        e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, xbox));
-                    }
-                }
-            }
-            break;
-        case cfg.unbind:
-            if (wl_exists(e.sender.qq) == false) {
-                e.reply(langhelper.get('MEMBER_NOT_BIND'), true);
-            } else {
-                let id = get_xboxid(e.sender.qq);
-                wl_remove(e.sender.qq);
-                e.reply(langhelper.get('MEMBER_UNBIND'), true);
-                RuncmdAll(`whitelist remove "${id}"`, e.self_id);
-                e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, id));
-            }
-            break;
-        case cfg.add_wl:
-            if (isAdmin(e.sender.qq) == false) {
-                e.reply(langhelper.get('MEMBER_NOT_ADMIN'));
-                return;
-            }
-            var at = getAt(e);
-            if (e.length != 0) {
-                at.forEach(element => {
-                    if (wl_exists(element)) {
-                        let xbox = get_xboxid(element);
-                        RuncmdAll(`allowlist add "${xbox}"`, e.self_id);
-                        e.reply(langhelper.get('ADD_WL_TO_SERVER', element, xbox));
-                    } else {
-                        e.reply(langhelper.get('MEMBER_NOT_BIND_WHEN_REMOVE', element));
-                    }
-                });
-            }
-            break;
-        case cfg.rem_wl:
-            if (isAdmin(e.sender.qq) == false) {
-                e.reply(langhelper.get('MEMBER_NOT_ADMIN'));
-                return;
-            }
-            var at = getAt(e);
-            at.forEach(element => {
-                if (!wl_exists(element)) {
-                    e.reply(langhelper.get('MEMBER_NOT_BIND_WHEN_REMOVE', element));
-                } else {
-                    let xbox = get_xboxid(element);
-                    e.reply(langhelper.get('REMOVE_WL_TO_SERVER', element, xbox));
-                    RuncmdAll(`whitelist remove "${xbox}"`, e.self_id);
-                    wl_remove(element);
-                }
-            });
-            break;
-    }
-}

@@ -56,11 +56,9 @@ class Plugin {
 
 let modules = {};
 
-
-
 function loadAll() {
     var cfg = {};
-    var pls = JSON.parse(fs.readFileSync('./modules/config.json', 'utf8'));
+    var pls = require('./modules/config.json');
     load('vanilla');
     fs.readdirSync('./modules/').forEach(p => {
         if (p != 'config.json' && p != 'vanilla'){
