@@ -58,7 +58,7 @@ let modules = {};
 
 function loadAll() {
     var cfg = {};
-    var pls = require('./modules/config.json');
+    var pls = require('../modules/config.json');
     load('vanilla');
     fs.readdirSync('./modules/').forEach(p => {
         if (p != 'config.json' && p != 'vanilla'){

@@ -49,6 +49,7 @@ module.exports = {
         api.addEvent('onMemberUnbind');
         api.addEvent('onServerStart');
         api.addEvent('onServerStop');
+        api.addEvent("onServerAccidentStop");
         api.addEvent('onPlayerJoin');
         api.addEvent('onPlayerLeft');
         api.addEvent('onPlayerChat');
@@ -76,13 +77,17 @@ module.exports = {
                         times.delete(data.params.sender);
                     }
                     break;
-                case 'server_start':
+                case 'start':
                     NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_START", dt.server));
                     NIL.EventManager.on('onServerStart', dt);
                     break;
-                case 'server_stop':
+                case 'stop':
                     NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_STOP", dt.server));
                     NIL.EventManager.on('onServerStop', dt);
+                    break;
+                case "accident_stop":
+                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_STOP_ACCIDENT", dt.server));
+                    NIL.EventManager.on('onServerAccidentStop', dt);
                     break;
                 case 'plantext':
                     NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, data.params.text);
