@@ -1,5 +1,6 @@
 # Logs
 /modules/_vanilla/config.json
+/modules/_vanilla/playerdata.json
 push.bat
 Data/
 logs
