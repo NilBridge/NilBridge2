@@ -108,6 +108,7 @@ module.exports = {
             get_qq,
             xbox_exists,
             add_time,
+            get_all,
             isAdmin
         };
     },
@@ -246,6 +247,10 @@ function add_time(xboxid,mode,time){
             playerdata[qq].period += time;
             break;
     }
+}
+
+function get_all(){
+    return playerdata;
 }
 
 var getAt = function (e) {

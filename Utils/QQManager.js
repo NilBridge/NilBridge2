@@ -182,5 +182,10 @@ function logoutAll(){
 NIL.bots = {
     getBot,
     logout,
-    logoutAll
+    logoutAll,
+    getAll:()=>{
+        let re = [];
+        Clients.forEach((v,k)=>{re.push(k)});
+        return re;
+    }
 };
