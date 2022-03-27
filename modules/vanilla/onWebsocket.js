@@ -32,8 +32,8 @@ function onws(dt){
                     break;
                 case 'join':
                     times.set(data.params.sender,new Date().getTime());
-                    add_time(data.params.sender,0,1);
-                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_JOIN', dt.server, data.params.sender,playerdata[get_qq(data.params.sender)].join));
+                    NIL._vanilla.add_time(data.params.sender,0,1);
+                    NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_JOIN', dt.server, data.params.sender,NIL._vanilla.get_player(data.params.sender).join));
                     send2Other(dt.server, data.cause, data.params.sender);
                     NIL.EventManager.on('onPlayerJoin', dt);
                     break;
@@ -42,7 +42,7 @@ function onws(dt){
                     send2Other(dt.server, data.cause, data.params.sender);
                     NIL.EventManager.on('onPlayerLeft', dt);
                     if(times.has(data.params.sender)){
-                        add_time(data.params.sender,1,new Date().getTime() - times.get(data.params.sender));
+                        NIL._vanilla.add_time(data.params.sender,1,new Date().getTime() - times.get(data.params.sender));
                         times.delete(data.params.sender);
                     }
                     break;

@@ -31,6 +31,7 @@ checkFile('config.json', JSON.stringify({
 
 const onChat = require('./onChat');
 const onMain = require('./onMain');
+const onWebsocket = require("./onWebsocket");
 
 let playerdata = JSON.parse(NIL.IO.readFrom(path.join(__dirname, 'playerdata.json')))
 const cfg = JSON.parse(NIL.IO.readFrom(path.join(__dirname, 'config.json')));
@@ -52,7 +53,7 @@ module.exports = {
         api.addEvent('onPlayerLeft');
         api.addEvent('onPlayerChat');
         api.listen('onWebsocketReceived', (dt) => {
-            
+            onWebsocket(dt);
         });
         api.listen('onGroupMessageReceived', (e) => {
             if (cfg.group.main == e.group.id) {

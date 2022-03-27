@@ -63,7 +63,7 @@ function loadAll() {
     fs.readdirSync('./modules/').forEach(p => {
         if (p != 'config.json' && p != 'vanilla'){
             try {
-                if(pls[p]==false)return;        
+                if(pls[p]==false){cfg[p] = false; return; }       
                 cfg[p] = load(p);
             } catch (err) {
                 logger.error(err);
