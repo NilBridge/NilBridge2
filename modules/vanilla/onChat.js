@@ -8,8 +8,7 @@ function SendTextAll(text) {
 }
 
 function onChat(e) {
-    let xbox =NIL._vanilla.get_xboxid(e.sender.qq);
-    SendTextAll(langhelper.get('GROUP_MEMBER_CHAT',xbox == undefined? e.sender.nick:xbox, GetFormatText(e)));
+    SendTextAll(langhelper.get('GROUP_MEMBER_CHAT',NIL._vanilla.wl_exists(e.sender.qq)?NIL._vanilla.get_xboxid(e.sender.qq):e.sender.nick, GetFormatText(e)));
 }
 
 var GetFormatText = function (e) {

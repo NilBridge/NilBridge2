@@ -39,8 +39,6 @@ function save_playerdata() {
     NIL.IO.WriteTo(path.join(__dirname, 'playerdata.json'), JSON.stringify(playerdata, null, '\t'));
 }
 
-let times = new Map();
-
 module.exports = {
     onStart(api) {
         api.addEvent('onMainMessageReceived');
@@ -134,9 +132,9 @@ function get_qq(xboxid){
 }
 
 function xbox_exists(id) {
-    Object.values(playerdata).forEach(s=>{
-        if(s.xboxid == id) return true;
-    });
+    for(let i in playerdata){
+        if(playerdata[i].xboxid == id)return true;
+    }
     return false;
 }
 

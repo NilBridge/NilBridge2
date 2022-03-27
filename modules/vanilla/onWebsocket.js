@@ -1,6 +1,6 @@
 const Lang = require('./Lang');
 const langhelper = new Lang('lang.ini');
-
+const cfg = require("./config.json");
 function send2Other(ser, mode, pl, t) {
     var txt = '';
     switch (mode) {
@@ -20,6 +20,7 @@ function send2Other(ser, mode, pl, t) {
     });
 }
 
+let times = new Map();
 
 function onws(dt){
     let data = JSON.parse(dt.message);

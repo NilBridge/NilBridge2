@@ -12,6 +12,7 @@ class Lang{
     get(){
         let args = Object.values(arguments);
         let text = this.lang[args[0]];
+        if(args.length == 1)return text;
         for(let i=0;i<args.length-1;i++){
             text = text.replace(`{${i}}`,args[i+1]);
         }

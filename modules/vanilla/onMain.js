@@ -31,6 +31,7 @@ function RuncmdAll(cmd, self) {
     });
 }
 
+let times = new Map();
 
 function onMain(e) {
     if (e.self_id != cfg.self_id) return;
@@ -92,9 +93,9 @@ function onMain(e) {
                 return;
             }
             var xbox = text.substring(cfg.bind.length + 1);
-            if (NIL._vanilla.xbox_exists(xbox)) {
-                let id = NIL._vanilla.get_xboxid(e.sender.qq);
-                e.reply(langhelper.get('MEMBER_ALREADY_IN_WHITELIST', id), true);
+            if (NIL._vanilla.wl_exists(e.sender.qq)) {
+                //let id = NIL._vanilla.get_xboxid(e.sender.qq);
+                e.reply(langhelper.get('MEMBER_ALREADY_IN_WHITELIST'), true);
             } else {
                 if (NIL._vanilla.xbox_exists(xbox)) {
                     e.reply(langhelper.get('XBOXID_ALREADY_BIND'), true);
@@ -110,10 +111,10 @@ function onMain(e) {
             }
             break;
         case cfg.unbind:
-            if (wl_exists(e.sender.qq) == false) {
+            if (NIL._vanilla.wl_exists(e.sender.qq) == false) {
                 e.reply(langhelper.get('MEMBER_NOT_BIND'), true);
             } else {
-                let id = get_xboxid(e.sender.qq);
+                let id = NIL._vanilla.get_xboxid(e.sender.qq);
                 NIL._vanilla.wl_remove(e.sender.qq);
                 e.reply(langhelper.get('MEMBER_UNBIND'), true);
                 RuncmdAll(`whitelist remove "${id}"`, e.self_id);
