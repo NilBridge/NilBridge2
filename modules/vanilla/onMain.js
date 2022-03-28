@@ -1,6 +1,12 @@
 const Lang = require('./Lang');
+const path = require("path");
 const langhelper = new Lang('lang.ini');
 const cfg = require("./config.json");
+let regex_path = path.join(__dirname,"regex.json");
+if(NIL.IO.exists(regex_path)==false){
+    NIL.IO.WriteTo(regex_path,JSON.stringify({cmds:{"(.*)There are (.*)\/(.*) players online:[\\r\n]+(.*)Server\\] (.*)":"有$2个玩家在线：$5","Syntax error:(.+)":"执行出错：$1"},group:[]}))
+}
+let regexs = JSON.parse(NIL.IO.readFrom(regex_path));
 var getAt = function (e) {
     var at = [];
     for (i in e.message) {
@@ -31,7 +37,61 @@ function RuncmdAll(cmd, self) {
     });
 }
 
-let times = new Map();
+function buildString(str,reg){
+    var i = 0;
+    reg.forEach(s=>{
+        str = str.replace(`\$${i}`,s);
+        i++
+    });
+    return str;
+}
+
+
+function fomatCMD(result){
+    for(let i in regexs.cmds){
+        let tmp = result.match(i);
+        if(tmp == null) continue;
+        return buildString(regexs.cmds[i],tmp);
+    }
+}
+
+
+
+function onRegex(str,e){
+    for(let i in regexs.group){
+        let tmp = str.match(regexs.group[i].Regex);
+        if(tmp == null)continue;
+        regexs.group[i].actions.forEach(item=>{
+            switch(item.type){
+                case 'reply':
+                    e.reply(buildString(item.text,tmp));
+                    break;
+                case 'group':
+                    NIL.bots.getBot(e.self_id).sendGroupMsg(item.id,buildString(item.text,tmp));
+                    break;
+                case "nbcmd":
+                    NIL.NBCMD.run_cmd(buildString(item.text,tmp),(err,result)=>{
+                        if(err){
+                            e.reply(`执行出错：${err.stack}`,true);
+                        }else{
+                            if(Array.isArray(result)){
+                                e.reply(result.join('\n'),true);
+                            }else{
+                                e.reply(result,true);
+                            }
+                        }
+                    });
+                    break;
+            }
+        });
+    }
+}
+
+NIL.NBCMD.regUserCmd('regexreload','重载正则表达式',(arg)=>{
+    regexs = JSON.parse(NIL.IO.readFrom(path.join(__dirname,"regex.json")));
+    return '正则表达式重载完成';
+});
+
 
 function onMain(e) {
     if (e.self_id != cfg.self_id) return;
@@ -41,7 +101,7 @@ function onMain(e) {
         case cfg.check:
             NIL.SERVERS.forEach((s, n) => {
                 s.sendCMD('list', (re) => {
-                    e.reply(`${n}\n${re}`);
+                    e.reply(`[${n}]\n${fomatCMD(re)}`);
                 });
             });
             break;
@@ -55,7 +115,7 @@ function onMain(e) {
                 NIL.SERVERS.forEach((s, k) => {
                     e.reply(langhelper.get("COMMAND_SENDTO_SERVER", cmd, k), true);
                     s.sendCMD(cmd, (dt) => {
-                        e.reply(`${k}\n${dt}`);
+                        e.reply(`[${k}]\n${fomatCMD(dt)}`);
                     });
                 });
             }
@@ -155,6 +215,9 @@ function onMain(e) {
                     NIL._vanilla.wl_remove(element);
                 }
             });
+            break;
+        default:
+            onRegex(text,e);
             break;
     }
 }

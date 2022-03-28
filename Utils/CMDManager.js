@@ -94,8 +94,6 @@ const OverLoadType = {
     Player: 4
 }
 
-NIL.OverLoadType = OverLoadType;
-
 class CMDRegister {
     constructor(name, desc, permission = 0) {
         this._Enums = {};
@@ -162,5 +160,3 @@ class CMDRegister {
         remUserCmd(this._name);
     }
 }
-
-NIL.CMDRegister = CMDRegister;

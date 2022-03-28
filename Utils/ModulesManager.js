@@ -84,6 +84,7 @@ function unload(name) {
         logger.warn(`模块 [${name}] 未找到`);
         return;
     }
+    delete require.cache[require.resolve(path.join(__dirname,'../modules',name))];
     logger.info(`unloadinging ${name.green}`);
     modules[name].unload();
     delete modules[name];

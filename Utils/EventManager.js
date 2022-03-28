@@ -1,4 +1,3 @@
-const log = require('./Logger');
 const logger = new NIL.Logger('EventManager');
 
 let Events = {};
