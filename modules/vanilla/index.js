@@ -54,6 +54,7 @@ module.exports = {
         api.addEvent('onPlayerChat');
         api.listen('onWebsocketReceived', (dt) => {
             onWebsocket(dt);
+            
         });
         api.listen('onGroupMessageReceived', (e) => {
             if (cfg.group.main == e.group.id) {

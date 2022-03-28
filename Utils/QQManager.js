@@ -131,38 +131,29 @@ NIL.NBCMD.regUserCmd('qq', 'QQ机器人模块', (arg) => {
                     if(arg[2]){
                         for(var i in bots){
                             if(bots[i].qq.toString() == arg[2]){
-                                logger.warn('已存在一个自动登录项：',arg[2]);
-                                return;
+                                return '已存在一个自动登录项：'+arg[2];
                             }
                         }
                         AddConfig(arg[2]);
+                        return `添加登录项 ${arg[2]} 成功`;
                     }else{
-                        logger.warn('参数错误：无法找到<qq>，键入qq autologin help查看帮助');         
+                        return '参数错误：无法找到<qq>，键入qq autologin help查看帮助';         
                     }
-                    break;
                 case "remove":
                     for(var i in bots){
                         if(bots[i].qq.toString() == arg[2]){
                             bots.splice(i);
                             NIL.IO.WriteTo('./Data/QQ.json', JSON.stringify(bots,null,'\t'));
-                            logger.info('移除登录项',arg[2],'成功');
-                            return;
+                            return `移除登录项 ${arg[2]} 成功`;
                         }
                     }
-                    logger.warn('没有这样的登录项：',arg[2]);
-                    break;
-                case 'set':
-                    break;
+                    return '没有这样的登录项：'+arg[2];
+                default:
+                    return `没有这样的指令：${arg[1]}`;
             }
-            break;
         case 'help':
-            logger.info('qq login <qq> - 登录一个QQ账号');
-            logger.info('qq logout <qq> - 下线一个QQ账号');
-            logger.info('qq autologin <add|remove|set> <qq> [opition] [value] - 自动登录设置');
-            break;
+            return ['qq login <qq> - 登录一个QQ账号','qq logout <qq> - 下线一个QQ账号','qq autologin <add|remove> <qq> - 自动登录设置'];
         default:
-            logger.warn('指令参数不足，键入qq help查看命令');
-            break;
     }
 });
 
