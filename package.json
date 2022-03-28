@@ -9,7 +9,6 @@
     "md5-node": "^1.0.1",
     "oicq": "^2.2.0",
     "silly-datetime": "^0.1.2",
-    "sqlite3": "^5.0.2",
     "sync-request": "^6.1.0",
     "websocket": "^1.0.34"
   }
