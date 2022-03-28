@@ -1,0 +1,8 @@
+{
+    "server":{
+        "(.*)There are (.*)\/(.*) players online:[\\r\n]+(.*)Server\\] (.*)":"有$2个玩家在线:$4"
+    },
+    "group":{
+
+    }
+}
