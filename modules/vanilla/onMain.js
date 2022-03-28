@@ -4,7 +4,7 @@ const langhelper = new Lang('lang.ini');
 const cfg = require("./config.json");
 let regex_path = path.join(__dirname,"regex.json");
 if(NIL.IO.exists(regex_path)==false){
-    NIL.IO.WriteTo(regex_path,JSON.stringify({cmds:{"(.*)There are (.*)\/(.*) players online:[\\r\n]+(.*)Server\\] (.*)":"有$2个玩家在线：$5","Syntax error:(.+)":"执行出错：$1"},group:[]}))
+    NIL.IO.WriteTo(regex_path,JSON.stringify({cmds:{"(.*)There are (.*)\/(.*) players online:[\\r\n]+(.*)Server\\] (.*)":"有$2个玩家在线：$5","Syntax error:(.+)":"执行出错：$1"},group:[]},null,'\t'));
 }
 let regexs = JSON.parse(NIL.IO.readFrom(regex_path));
 var getAt = function (e) {
