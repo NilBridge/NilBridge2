@@ -1,5 +1,5 @@
 global.NIL = {};
-NIL.version = [1, 0, 0];
+NIL.version = [1, 0, 1];
 require('./Utils/Logger');
 var logger = new NIL.Logger('Main');
 require('./Utils/CMDManager');
