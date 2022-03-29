@@ -4,7 +4,7 @@ function onStart(api){
       return '参数不足，格式：start_server <服务器名称>';
     }else{
       if(NIL.SERVERS.has(args[0])){
-        NIL.SERVERS.get(args[0]).sendStart();
+        NIL.SERVERS.get(args[0]).sendStop();
         return `服务器关闭请求已发送到[${args[0]}]`;
       }else{
         return `没有名为${args[0]}的服务器`;

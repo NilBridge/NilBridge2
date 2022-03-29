@@ -1,0 +1,11 @@
+{
+    "name":"vanilla",
+    "version": "1.0.0",
+    "description": "start and stop server in nbcmd",
+    "author": "Lition",
+    "license": "GNU Affero General Public License v3.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NilBridge/start_and_stop"
+    }
+}
