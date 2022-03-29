@@ -59,6 +59,7 @@ function fomatCMD(result){
 
 function onRegex(str,e){
     for(let i in regexs.group){
+        if(NIL._vanilla.isAdmin(e.sender.qq)==false && regexs.group[i].permission ==1)continue;
         let tmp = str.match(regexs.group[i].Regex);
         if(tmp == null)continue;
         regexs.group[i].actions.forEach(item=>{
