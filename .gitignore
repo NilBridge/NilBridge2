@@ -5,6 +5,7 @@ modules/vanilla/config.json
 modules/vanilla/regex.json
 push.bat
 Data/
+.vscode/
 logs
 *.log
 npm-debug.log*
