@@ -10,7 +10,7 @@ function run_cmd(cmd,callback){
             callback(err);
         }
     }else{
-        callback('没有这个命令：'+args[0]);
+        callback(new Error('没有这个命令：'+args[0]));
     }
 }
 

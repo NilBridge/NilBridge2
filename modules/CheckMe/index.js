@@ -28,7 +28,7 @@ function onStart(api){
 
 function timeFormat(dur){
     if (dur!==0){
-        let hour=3600*10000;
+        let hour=3600*1000;
         return (dur/hour).toFixed(2);
     }
     return 0;

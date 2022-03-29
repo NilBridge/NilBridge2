@@ -94,6 +94,7 @@ function unload(name) {
 
 function load(p) {
     var pt = path.join(__dirname, '../modules', p);
+    if(NIL.IO.exists(pt)==false) throw new Error(`模块${p}未找到`);
     logger.info(`loading ${p}`);
     try{
         var part = require(pt);

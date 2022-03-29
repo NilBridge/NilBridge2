@@ -9,7 +9,6 @@ if (NIL.IO.exists('./Data') == false) NIL.IO.createDir('./Data');
 require('./Utils/ServerManager');
 require('./Utils/QQManager');
 require('./Utils/ModulesManager');
-//require('./Utils/PanelManager');
 const readline = require('readline');
 const rl = readline.createInterface({
     input: process.stdin,
@@ -19,6 +18,7 @@ const rl = readline.createInterface({
 logger.info(`NilBridge2 v${NIL.version.join('.')}`);
 
 NIL.EventManager.on('onNilBridgeStart', {});
+
 rl.on('line', (input) => {
     NIL.NBCMD.run_cmd(input, (err, callback) => {
         if (err) {
