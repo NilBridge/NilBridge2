@@ -140,10 +140,11 @@ function onMain(e) {
                 return;
             }
             let cmd = text.substring(cfg.nbcmd.length + 1);
-            e.reply(`命令${cmd}已执行`, true);
             NIL.NBCMD.run_cmd(cmd, (err, cb) => {
                 if (err) {
                     e.reply(err.stack, true);
+                }else{
+                    e.reply(cb);
                 }
             });
             break;

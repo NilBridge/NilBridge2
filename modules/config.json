@@ -1,4 +1,4 @@
 {
-	"BagSync": false,
-	"CheckMe": true
+	"CheckMe": true,
+	"StartStop": true
 }

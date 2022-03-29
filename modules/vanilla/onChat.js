@@ -20,7 +20,7 @@ var GetFormatText = function (e) {
                     rt += langhelper.get("MESSAGE_AT_ALL");
                     continue;
                 }
-                rt += langhelper.get('MESSAGE_AT', e.message[i].text);
+                rt += langhelper.get('MESSAGE_AT', NIL._vanilla.wl_exists(e.message[i].qq)?NIL._vanilla.get_xboxid(e.message[i].qq):e.sender.nick);
                 break;
             case "image":
                 rt += langhelper.get("MESSAGE_IMAGE");
