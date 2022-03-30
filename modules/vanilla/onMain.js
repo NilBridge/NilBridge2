@@ -141,11 +141,15 @@ function onMain(e) {
                 return;
             }
             let cmd = text.substring(cfg.nbcmd.length + 1);
-            NIL.NBCMD.run_cmd(cmd, (err, cb) => {
+            NIL.NBCMD.run_cmd(cmd, (err, result) => {
                 if (err) {
-                    e.reply(err.stack, true);
+                    e.reply(err.message, true);
                 }else{
-                    e.reply(cb);
+                    if(Array.isArray(result)){
+                        e.reply(result.join('\n'),true);
+                    }else{
+                        e.reply(result,true);
+                    }
                 }
             });
             break;
