@@ -1,0 +1,3 @@
+# AutoCovert
+
+把旧版playerdata.xdb放到本文件夹中会自动转换为新版playerdata.json
