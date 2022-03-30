@@ -170,7 +170,7 @@ function onMain(e) {
                     if (cfg.auto_rename) e.member.setCard(xbox);
                     e.reply(langhelper.get('MEMBER_BIND_SUCCESS', xbox), true);
                     if (cfg.auto_wl) {
-                        RuncmdAll(`whitelist remove "${xbox}"`, e.self_id);
+                        RuncmdAll(`whitelist add "${xbox}"`, e.self_id);
                         e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, xbox));
                     }
                 }
@@ -217,7 +217,7 @@ function onMain(e) {
                 } else {
                     let xbox = NIL._vanilla.get_xboxid(element);
                     e.reply(langhelper.get('REMOVE_WL_TO_SERVER', element, xbox));
-                    RuncmdAll(`whitelist remove "${xbox}"`, e.self_id);
+                    RuncmdAll(`allowlist remove "${xbox}"`, e.self_id);
                     NIL._vanilla.wl_remove(element);
                 }
             });
