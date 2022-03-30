@@ -171,7 +171,7 @@ function onMain(e) {
                     e.reply(langhelper.get('MEMBER_BIND_SUCCESS', xbox), true);
                     if (cfg.auto_wl) {
                         RuncmdAll(`whitelist add "${xbox}"`, e.self_id);
-                        e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, xbox));
+                        e.reply(langhelper.get('ADD_WL_TO_SERVER', e.sender.qq, xbox));
                     }
                 }
             }
