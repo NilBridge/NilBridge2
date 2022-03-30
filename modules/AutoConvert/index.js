@@ -13,7 +13,8 @@ function onStart(api){
             let tmp = old_data[member];
             new_data[member] = {join:tmp.count.join,xboxid:tmp.xboxid,period:tmp.count.duration};
         }
-        NIL.IO.WriteTo(path.join(__dirname,'playerdata.json'),JSON.stringify(new_data,null,4));
+        NIL.IO.delete(old_data);
+        NIL.IO.WriteTo(path.join(__dirname,'../vanilla','playerdata.json'),JSON.stringify(new_data,null,4));
         api.logger.info('数据转换完毕');
     }    
 }
