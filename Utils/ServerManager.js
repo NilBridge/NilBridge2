@@ -9,7 +9,7 @@ NIL.EventManager.addEvent('MAIN','onWebsocketReceived');
 NIL.EventManager.addEvent('MAIN','onWebsocketError');
 
 if(NIL.IO.exists('./Data/servers.json')==false){
-    NIL.IO.WriteTo('./Data/servers.json',JSON.stringify({生存服务器:{url:"ws://127.0.0.1:8080/mc",pwd:'password'}}));
+    NIL.IO.WriteTo('./Data/servers.json',JSON.stringify({生存服务器:{url:"ws://127.0.0.1:8123/mc",pwd:'password'}},null,'\t'));
 }
 
 let cfg = JSON.parse(NIL.IO.readFrom('./Data/servers.json'));
