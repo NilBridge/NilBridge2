@@ -53,6 +53,7 @@ function fomatCMD(result){
         if(tmp == null) continue;
         return buildString(regexs.cmds[i],tmp);
     }
+    return result;
 }
 
 
