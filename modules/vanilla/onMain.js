@@ -109,7 +109,7 @@ function onMain(e) {
             break;
         case cfg.cmd:
             if (NIL._vanilla.isAdmin(e.sender.qq) == false) {
-                e.reply(langhelper.get('MEMBER_NOT_ADMIN'));
+                e.reply(langhelper.get('MEMBER_NOT_ADMIN',NIL._vanilla.get_xboxid(e.sender.qq)));
                 return;
             }
             if (NIL.SERVERS.size == 1) {

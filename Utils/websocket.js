@@ -9,10 +9,9 @@ module.exports = class{
         this._reConnectTime = 5000;
         this.ws = new WebSocketClient();
         this.onmessage = func;
-        this.ws.connect(url);
         this.ws.on('connect',(con)=>{
             this.con = con;
-            this._ifAlive= true;
+            this._ifAlive = true;
             this._logger.info('connect!');
             NIL.EventManager.on('onWebsocketConnected',{server:this.name});
             con.on('close',(code,desc)=>{
@@ -42,8 +41,9 @@ module.exports = class{
             this._logger.warn(`connect failed, restart connect in ${(this._reConnectTime/1000).toFixed(1)} seconds`);
             setTimeout(()=>{
                 this.ws.connect(this.url);
-            },5000);
+            },this._reConnectTime);
         });
+        this.ws.connect(this.url);
     }
     get ifAlive(){
         return this._ifAlive;

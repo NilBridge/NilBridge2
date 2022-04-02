@@ -81,5 +81,6 @@ NIL.EventManager.listen('MAIN','onWebsocketReceived',(dt)=>{
 });
 
 for(let ser in cfg){
+    logger.info('loading server ->',ser);
     NIL.SERVERS.set(ser,new SERVER(cfg[ser].url,ser,cfg[ser].pwd));
 }
