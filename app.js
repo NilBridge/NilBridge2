@@ -1,6 +1,7 @@
 global.NIL = {};
 NIL.version = [1, 0, 2];
 require('./Utils/Logger');
+const { ErrorCode } = require('oicq');
 var logger = new NIL.Logger('Main');
 require('./Utils/CMDManager');
 require('./Utils/EventManager');
@@ -48,5 +49,7 @@ NIL.NBCMD.regUserCmd('stop', '关闭NilBridge', () => {
 })
 
 process.on('unhandledRejection', (reason, promise) => {
-    console.log(reason, promise);
+    logger.warn(`看到这条消息表明，您的参数出现了${'null'.bgRed}或者${'undefined'.bgRed}，请检查`);
+    logger.warn(`error type :${ErrorCode[reason.code].bgYellow}`);
+    logger.warn(`errorcode : ${reason.code.toString().yellow},descr : ${reason.message.bgRed}`);
 });
