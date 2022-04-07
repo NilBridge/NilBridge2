@@ -72,6 +72,7 @@ function getEventObj(e,qq) {
         id: e.message_id,
         message: e.message,
         member:e.member,
+        raw_message: e.raw_message,
         sender: {
             qq: e.sender.user_id,
             nick: e.sender.nickname,

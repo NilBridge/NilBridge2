@@ -8,6 +8,7 @@ modules/*.nopush/
 push.bat
 Data/
 .vscode/
+
 # Logs
 logs
 *.log
