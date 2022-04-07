@@ -1,0 +1,28 @@
+{
+    "cmds":{
+        "(.*)There are (.*)\/(.*) players online:[\\r\n]+(.*)Server\\] (.*)":"有$2个玩家在线：$5",
+        "\\[Server\\] Syntax error:(.+)":"执行出错：$1"
+    },
+    "group":[
+        {
+            "Regex":"关服 (.+)",
+            "permission":1,
+            "actions":[
+                {
+                    "type":"nbcmd",
+                    "text":"stop_server $1"
+                }
+            ]
+        },
+        {
+            "Regex":"开服 (.+)",
+            "permission":1,
+            "actions":[
+                {
+                    "type":"nbcmd",
+                    "text":"start_server $1"
+                }
+            ]
+        }
+    ]
+}

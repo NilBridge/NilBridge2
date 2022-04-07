@@ -1,0 +1,22 @@
+{
+	"bind": "/bind",
+	"cmd": "/cmd",
+	"unbind": "/unbind",
+	"add_wl": "wl+",
+	"rem_wl": "wl-",
+	"check": "查服",
+	"nbcmd":"/nbcmd",
+	"auto_wl": false,
+	"auto_rename": false,
+	"auto_remove": false,
+	"admins":[
+		"144115218677257141"
+	],
+	"group": {
+		"main": 1020160254,
+		"chat": 1020160254
+	},
+	"self_id":2837945976,
+	"onMain": true,
+    "onChat": true
+}
