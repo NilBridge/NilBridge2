@@ -2,9 +2,10 @@ const Lang = require('./Lang');
 const path = require("path");
 const langhelper = new Lang('lang.ini');
 const cfg = require("./config.json");
-let regex_path = path.join(__dirname,"regex.json");
-if(NIL.IO.exists(regex_path)==false){
-    NIL.IO.WriteTo(regex_path,JSON.stringify({cmds:{"(.*)There are (.*)\/(.*) players online:[\\r\n]+(.*)Server\\] (.*)":"有$2个玩家在线：$5","Syntax error:(.+)":"执行出错：$1"},group:[]},null,'\t'));
+const http = require('http');
+let regex_path = path.join(__dirname, "regex.json");
+if (NIL.IO.exists(regex_path) == false) {
+    NIL.IO.WriteTo(regex_path, JSON.stringify({ cmds: { "(.*)There are (.*)\/(.*) players online:[\\r\n]+(.*)Server\\] (.*)": "有$2个玩家在线：$5", "Syntax error:(.+)": "执行出错：$1" }, group: [] }, null, '\t'));
 }
 let regexs = JSON.parse(NIL.IO.readFrom(regex_path));
 var getAt = function (e) {
@@ -37,60 +38,73 @@ function RuncmdAll(cmd, self) {
     });
 }
 
-function buildString(str,reg){
+function buildString(str, reg) {
     var i = 0;
-    reg.forEach(s=>{
-        str = str.replace(`\$${i}`,s);
+    reg.forEach(s => {
+        str = str.replace(`\$${i}`, s);
         i++
     });
     return str;
 }
 
 
-function fomatCMD(result){
-    for(let i in regexs.cmds){
+function fomatCMD(result) {
+    for (let i in regexs.cmds) {
         let tmp = result.match(i);
-        if(tmp == null) continue;
-        return buildString(regexs.cmds[i],tmp);
+        if (tmp == null) continue;
+        return buildString(regexs.cmds[i], tmp);
     }
     return result;
 }
 
 
 
-function onRegex(str,e){
-    for(let i in regexs.group){
-        if(NIL._vanilla.isAdmin(e.sender.qq)==false && regexs.group[i].permission ==1)continue;
+function onRegex(str, e) {
+    for (let i in regexs.group) {
+        if (NIL._vanilla.isAdmin(e.sender.qq) == false && regexs.group[i].permission == 1) continue;
         let tmp = str.match(regexs.group[i].Regex);
-        if(tmp == null)continue;
-        regexs.group[i].actions.forEach(item=>{
-            switch(item.type){
+        if (tmp == null) continue;
+        regexs.group[i].actions.forEach(item => {
+            switch (item.type) {
                 case 'reply':
-                    e.reply(buildString(item.text,tmp));
+                    e.reply(buildString(item.text, tmp));
                     break;
                 case 'group':
-                    NIL.bots.getBot(e.self_id).sendGroupMsg(item.id,buildString(item.text,tmp));
+                    NIL.bots.getBot(e.self_id).sendGroupMsg(item.id, buildString(item.text, tmp));
                     break;
                 case "nbcmd":
-                    NIL.NBCMD.run_cmd(buildString(item.text,tmp),(err,result)=>{
-                        if(err){
-                            e.reply(`执行出错：${err.stack}`,true);
-                        }else{
-                            if(Array.isArray(result)){
-                                e.reply(result.join('\n'),true);
-                            }else{
-                                e.reply(result,true);
+                    NIL.NBCMD.run_cmd(buildString(item.text, tmp), (err, result) => {
+                        if (err) {
+                            e.reply(`执行出错：${err.stack}`, true);
+                        } else {
+                            if (Array.isArray(result)) {
+                                e.reply(result.join('\n'), true);
+                            } else {
+                                e.reply(result, true);
                             }
                         }
                     });
+                    break;
+                case 'http_get':
+                    http.get(item.url, (res) => {
+                        let html = ""
+                        res.on("data", (data) => {
+                            html += data
+                        })
+                        res.on("end", () => {
+                            e.reply(item.text.replcae('{data}',html),true);
+                        })
+                    }).on("error", (e) => {
+                        e.reply(`获取数据失败: ${e.message}`,true);
+                    })
                     break;
             }
         });
     }
 }
 
-NIL.NBCMD.regUserCmd('regexreload','重载正则表达式',(arg)=>{
-    regexs = JSON.parse(NIL.IO.readFrom(path.join(__dirname,"regex.json")));
+NIL.NBCMD.regUserCmd('regexreload', '重载正则表达式', (arg) => {
+    regexs = JSON.parse(NIL.IO.readFrom(path.join(__dirname, "regex.json")));
     return '正则表达式重载完成';
 });
 
@@ -109,7 +123,7 @@ function onMain(e) {
             break;
         case cfg.cmd:
             if (NIL._vanilla.isAdmin(e.sender.qq) == false) {
-                e.reply(langhelper.get('MEMBER_NOT_ADMIN',NIL._vanilla.get_xboxid(e.sender.qq)));
+                e.reply(langhelper.get('MEMBER_NOT_ADMIN', NIL._vanilla.get_xboxid(e.sender.qq)));
                 return;
             }
             if (NIL.SERVERS.size == 1) {
@@ -145,11 +159,11 @@ function onMain(e) {
             NIL.NBCMD.run_cmd(cmd, (err, result) => {
                 if (err) {
                     e.reply(err.message, true);
-                }else{
-                    if(Array.isArray(result)){
-                        e.reply(result.join('\n'),true);
-                    }else{
-                        e.reply(result,true);
+                } else {
+                    if (Array.isArray(result)) {
+                        e.reply(result.join('\n'), true);
+                    } else {
+                        e.reply(result, true);
                     }
                 }
             });
@@ -224,7 +238,7 @@ function onMain(e) {
             });
             break;
         default:
-            onRegex(text,e);
+            onRegex(text, e);
             break;
     }
 }

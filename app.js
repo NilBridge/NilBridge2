@@ -1,6 +1,7 @@
 global.NIL = {};
 NIL.version = [1, 0, 2];
 require('./Utils/Logger');
+const http = require('http');
 const { ErrorCode } = require('oicq');
 var logger = new NIL.Logger('Main');
 require('./Utils/CMDManager');
@@ -54,3 +55,4 @@ process.on('unhandledRejection', (reason, promise) => {
     logger.warn(`error type :${ErrorCode[reason.code].bgYellow}`);
     logger.warn(`errorcode : ${reason.code.toString().yellow},descr : ${reason.message.bgRed}`);
 });
+
