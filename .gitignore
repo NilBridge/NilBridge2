@@ -1,4 +1,5 @@
-# Logs
+# nilbridge
+package-lock.json
 modules/config.json
 modules/vanilla/playerdata.json
 modules/vanilla/config.json
@@ -7,6 +8,7 @@ modules/*.nopush/
 push.bat
 Data/
 .vscode/
+# Logs
 logs
 *.log
 npm-debug.log*
