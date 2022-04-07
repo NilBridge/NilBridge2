@@ -48,6 +48,7 @@ NIL.NBCMD.regUserCmd('stop', '关闭NilBridge', () => {
     return '正在退出';
 })
 
+
 process.on('unhandledRejection', (reason, promise) => {
     logger.warn(`看到这条消息表明，您的参数出现了${'null'.bgRed}或者${'undefined'.bgRed}，请检查`);
     logger.warn(`error type :${ErrorCode[reason.code].bgYellow}`);
