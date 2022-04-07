@@ -3,6 +3,7 @@ modules/config.json
 modules/vanilla/playerdata.json
 modules/vanilla/config.json
 modules/vanilla/regex.json
+modules/*.nopush/
 push.bat
 Data/
 .vscode/
