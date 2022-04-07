@@ -34,7 +34,7 @@ NIL.SERVERS.get('生存服务器').sendCMD('list',(result)=>{
 function onStart(api){
     api.logger.info('我被加载啦！');
     api.listen('onMainMessageReceived',(e)=>{
-        e.reply(`收到${e.sender.qq}(${e.sender.nick})的消息！`)；
+        e.reply(`收到${e.sender.qq}(${e.sender.nick})的消息！`);
     });
 }
 
@@ -55,3 +55,7 @@ module.exports = {
 在加载时注册了`onMainMessageReceived`监听器，监听主群消息
 
 并在收到消息后向群聊中回复。
+
+在`modules`文件夹新建一个文件夹，取你插件的名字，然后把这个写入`index.js`中
+
+这就是一个最简单的插件
