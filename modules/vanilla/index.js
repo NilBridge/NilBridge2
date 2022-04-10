@@ -121,7 +121,7 @@ function get_xboxid(qq) {
 function get_player(xboxid){
     let qq = get_qq(xboxid);
     if(qq==undefined) return {join:0,period:0};
-    return playerdata[qq];
+    return Object.assign({}, playerdata[qq]);
 }
 
 function get_qq(xboxid){
