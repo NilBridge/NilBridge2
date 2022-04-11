@@ -1,5 +1,5 @@
 function onStart(api){
-  api.regCMD('stop_server','开启服务器',(args)=>{
+  api.regCMD('stop_server','关闭服务器',(args)=>{
     if(args.length == 0){
       return '参数不足，格式：start_server <服务器名称>';
     }else{

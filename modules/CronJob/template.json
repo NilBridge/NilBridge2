@@ -1,0 +1,70 @@
+{
+  "发消息": {
+    "enable": false,
+    "severName": "",
+    "cronEx": "*/20 * * * * *",
+    "chatJob": {
+      "enable": true,
+      "chatMsg": "测试"
+    },
+    "cmdJob": {
+      "enable": false,
+      "cmd": ""
+    },
+    "serverJob": {
+      "enable": false,
+      "type": 1
+    }
+  },
+  "开服": {
+    "enable": false,
+    "severName": "生存服务器",
+    "cronEx": "0 13 * * * *",
+    "chatJob": {
+      "enable": true,
+      "chatMsg": "服务器即将开启..."
+    },
+    "cmdJob": {
+      "enable": false,
+      "cmd": ""
+    },
+    "serverJob": {
+      "enable": true,
+      "type": 1
+    }
+  },
+  "关服": {
+    "enable": false,
+    "severName": "生存服务器",
+    "cronEx": "0 15 * * * *",
+    "chatJob": {
+      "enable": true,
+      "chatMsg": "服务器即将关闭..."
+    },
+    "cmdJob": {
+      "enable": false,
+      "cmd": ""
+    },
+    "serverJob": {
+      "enable": true,
+      "type": -1
+    }
+  },
+  "执行list": {
+    "enable": false,
+    "severName": "生存服务器",
+    "cronEx": "*/30 * * * * *",
+    "chatJob": {
+      "enable": true,
+      "chatMsg": "即将执行命令..."
+    },
+    "cmdJob": {
+      "enable": true,
+      "cmd": "list"
+    },
+    "serverJob": {
+      "enable": false,
+      "type": -1
+    }
+  }
+}
