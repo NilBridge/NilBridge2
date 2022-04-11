@@ -24,7 +24,7 @@ NIL.EventManager.on('onNilBridgeStart', {});
 rl.on('line', (input) => {
     NIL.NBCMD.run_cmd(input, (err, callback) => {
         if (err) {
-            logger.error(err.stack);
+            logger.error(err.message);
         } else {
             switch (Object.prototype.toString.call(callback)) {
                 case '[object Array]':
