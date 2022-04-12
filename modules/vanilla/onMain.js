@@ -62,6 +62,7 @@ function fomatCMD(result) {
 function onRegex(str, e) {
     for (let i in regexs.group) {
         if (NIL._vanilla.isAdmin(e.sender.qq) == false && regexs.group[i].permission == 1) continue;
+        if(regexs.group[i].permission == 3 && regexs.group[i].members.indexOf(e.sender.qq) == -1)continue;
         let tmp = str.match(regexs.group[i].Regex);
         if (tmp == null) continue;
         regexs.group[i].actions.forEach(item => {
@@ -75,7 +76,7 @@ function onRegex(str, e) {
                 case "nbcmd":
                     NIL.NBCMD.run_cmd(buildString(item.text, tmp), (err, result) => {
                         if (err) {
-                            e.reply(`执行出错：${err.stack}`, true);
+                            e.reply(`执行出错：${err.message}`, true);
                         } else {
                             if (Array.isArray(result)) {
                                 e.reply(result.join('\n'), true);

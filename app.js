@@ -1,5 +1,5 @@
 global.NIL = {};
-NIL.version = [1, 0, 2];
+NIL.version = [1, 0, 4];
 require('./Utils/Logger');
 const http = require('http');
 const { ErrorCode } = require('oicq');
@@ -14,7 +14,8 @@ require('./Utils/ModulesManager');
 const readline = require('readline');
 const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
+    prompt: '>> '.yellow
 });
 
 logger.info(`NilBridge2 v${NIL.version.join('.')}`);
