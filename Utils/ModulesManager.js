@@ -7,7 +7,9 @@ if (NIL.IO.exists('./modules/config.json') == false) {
     NIL.IO.WriteTo('./modules/config.json', '{}');
 }
 
-class Plugin {
+
+// 又在copy代码啦，休息一下好不好呀
+class Module {
     constructor(name, module) {
         this._module = module;
         this._name = name;
@@ -54,6 +56,25 @@ class Plugin {
     }
 }
 
+NIL.ModuleBase = class{
+    /**
+     * 模块加载时调用
+     * @param api 初始API
+     */
+    onStart(api){
+
+    }
+    /**
+     * 模块卸载时调用
+     */
+    onStop(){
+
+    }
+    get moduleName(){
+        
+    }
+};
+
 let modules = {};
 
 function loadAll() {
@@ -98,7 +119,7 @@ function load(p) {
     logger.info(`loading ${p}`);
     try{
         var part = require(pt);
-        modules[p] = new Plugin(p.split(".")[0], part);
+        modules[p] = new Module(p.split(".")[0], part);
         part.onStart(modules[p]);
         return true;
     }catch(err){

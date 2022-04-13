@@ -1,31 +1,3 @@
-function getText(e) {
-    var rt = '';
-    for (i in e.message) {
-        switch (e.message[i].type) {
-            case "text":
-                rt += e.message[i].text;
-                break;
-        }
-    }
-    return rt;
-}
-
-
-function onStart(api){
-    api.listen('onMainMessageReceived',(e)=>{
-        let t = getText(e);
-        if(t=='我的统计'){
-            if(NIL._vanilla.wl_exists(e.sender.qq)){
-                var pl = NIL._vanilla.get_player(NIL._vanilla.get_xboxid(e.sender.qq));
-                var str = `玩家名: ${pl.xboxid}\n进服次数: ${pl.join}\n游玩时间: ${timeFormat(pl.period)} 小时`;
-                e.reply(str);
-            }else{
-                e.reply('你还没有绑定白名单，无法查看统计数据');
-            }
-        }
-    });
-}
-
 function timeFormat(dur){
     if (dur!==0){
         let hour=3600*1000;
@@ -34,8 +6,24 @@ function timeFormat(dur){
     return 0;
 }
 
+class checkme extends NIL.ModuleBase{
+    onStart(api){  
+        api.logger.info('加载成功');
+        api.listen('onMainMessageReceived',(e)=>{
+            if(e.raw_message=='我的统计'){
+                if(NIL._vanilla.wl_exists(e.sender.qq)){
+                    var pl = NIL._vanilla.get_player(NIL._vanilla.get_xboxid(e.sender.qq));
+                    var str = `玩家名: ${pl.xboxid}\n进服次数: ${pl.join}\n游玩时间: ${timeFormat(pl.period)} 小时`;
+                    e.reply(str);
+                }else{
+                    e.reply('你还没有绑定白名单，无法查看统计数据');
+                }
+            }
+        });
+    }
+    onStop(){
 
-module.exports = {
-    onStart,
-    onStop(){}
+    }
 }
+
+module.exports = new checkme;
