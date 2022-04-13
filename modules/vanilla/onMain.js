@@ -62,7 +62,12 @@ function fomatCMD(result) {
 function onRegex(str, e) {
     for (let i in regexs.group) {
         if (NIL._vanilla.isAdmin(e.sender.qq) == false && regexs.group[i].permission == 1) continue;
-        if(regexs.group[i].permission == 3 && regexs.group[i].members.indexOf(e.sender.qq) == -1)continue;
+        if(regexs.group[i].permission == 3){
+            if(regexs.group[i].members == undefined){
+                throw new Error('permission 为 3 时，需要有member参数确定执行者');
+            }
+            if(regexs.group[i].members.indexOf(e.sender.qq) == -1)continue;
+        }
         let tmp = str.match(regexs.group[i].Regex);
         if (tmp == null) continue;
         regexs.group[i].actions.forEach(item => {
@@ -177,7 +182,7 @@ function onMain(e) {
             var xbox = text.substring(cfg.bind.length + 1);
             if (NIL._vanilla.wl_exists(e.sender.qq)) {
                 //let id = NIL._vanilla.get_xboxid(e.sender.qq);
-                e.reply(langhelper.get('MEMBER_ALREADY_IN_WHITELIST'), true);
+                e.reply(langhelper.get('MEMBER_ALREADY_IN_WHITELIST',NIL._vanilla.get_xboxid(e.sender.qq)), true);
             } else {
                 if (NIL._vanilla.xbox_exists(xbox)) {
                     e.reply(langhelper.get('XBOXID_ALREADY_BIND'), true);
