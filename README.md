@@ -1,6 +1,6 @@
-<center>
+<div align="center">
 
-<img width="160" src="https://nilbridge.site/img/index.jpg" alt="logo">
+<img width="160" src="https://nilbridge.site/img/index.jpg" alt="logo"><br>
 
 ***
 
@@ -8,7 +8,7 @@ NilBridge是一个在全平台下运行，提供QQ机器人协议库与Bedrock D
 
 图标以及形象由画师[Data07](https://github.com/cndata07)绘制
 
-</center>
+</div>
 
 
 ## NilBridge的优点
