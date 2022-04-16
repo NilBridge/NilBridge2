@@ -4,21 +4,21 @@
 
 ***
 
-NilBridge是一个在全平台下运行，提供QQ机器人协议库与Bedrock Dedicated Server通信的框架
+NilBridge是一个在全平台下运行，提供QQ机器人协议库用于与Bedrock Dedicated Server通信的框架
 
-图标以及形象由画师[Data07](https://github.com/cndata07)绘制
+图标以及形象由画师[CnData07](https://github.com/cndata07)绘制
 
 </div>
 
 
 ## NilBridge的优点
 
-   -  基于Node.js，全平台兼容
-   - 全开源代码
-   - 性能优化极佳
-   - 文档完善
-   - 支持插件拓展
-   - 开箱即用
+-  基于Node.js，全平台兼容
+- 全开源代码
+- 性能优化极佳
+- 文档完善
+- 支持插件拓展
+- 开箱即用
 
 
 ## 声明
