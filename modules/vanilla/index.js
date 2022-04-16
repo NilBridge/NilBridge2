@@ -52,9 +52,10 @@ module.exports = {
         api.addEvent('onPlayerJoin');
         api.addEvent('onPlayerLeft');
         api.addEvent('onPlayerChat');
+        api.addEvent('onMemberBinding');
+        api.addEvent('onMemberUnBinding');
         api.listen('onWebsocketReceived', (dt) => {
             onWebsocket(dt);
-            
         });
         api.listen('onGroupMessageReceived', (e) => {
             if (cfg.group.main == e.group.id) {

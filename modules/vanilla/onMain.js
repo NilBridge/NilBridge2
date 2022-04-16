@@ -190,6 +190,7 @@ function onMain(e) {
                     NIL._vanilla.wl_add(e.sender.qq, xbox);
                     if (cfg.auto_rename) e.member.setCard(xbox);
                     e.reply(langhelper.get('MEMBER_BIND_SUCCESS', xbox), true);
+                    NIL.EventManager.on('onMemberBinding',{member:e.sender,xboxid:xbox});
                     if (cfg.auto_wl) {
                         RuncmdAll(`whitelist add "${xbox}"`, e.self_id);
                         e.reply(langhelper.get('ADD_WL_TO_SERVER', e.sender.qq, xbox));
@@ -203,6 +204,7 @@ function onMain(e) {
             } else {
                 let id = NIL._vanilla.get_xboxid(e.sender.qq);
                 NIL._vanilla.wl_remove(e.sender.qq);
+                NIL.EventManager.on('onMemberUnBinding',{member:e.sender,xboxid:id});
                 e.reply(langhelper.get('MEMBER_UNBIND'), true);
                 RuncmdAll(`whitelist remove "${id}"`, e.self_id);
                 e.reply(langhelper.get('REMOVE_WL_TO_SERVER', e.sender.qq, id));
@@ -237,6 +239,7 @@ function onMain(e) {
                     e.reply(langhelper.get('MEMBER_NOT_BIND_WHEN_REMOVE', element));
                 } else {
                     let xbox = NIL._vanilla.get_xboxid(element);
+                    NIL.EventManager.on('onMemberUnBinding',{member:{qq:element},xboxid:xbox});
                     e.reply(langhelper.get('REMOVE_WL_TO_SERVER', element, xbox));
                     RuncmdAll(`allowlist remove "${xbox}"`, e.self_id);
                     NIL._vanilla.wl_remove(element);
