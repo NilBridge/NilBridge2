@@ -1,12 +1,14 @@
-# NilBridge2
+<center>
 
-## 什么是NilBridge？
+<img width="160" src="https://nilbridge.site/img/index.jpg" alt="logo">
 
- - NilBridge是与基岩版服务端Bedrock Dedicated Server与QQ通讯的基础框架，拥有海量十几个API接口。
+***
 
- - 通过使用js等语言编写插件，开发者可以方便地对NilBridge进行功能拓展与特性定制，容易上手，并且具有极高的灵活性.
+NilBridge是一个在全平台下运行，提供QQ机器人协议库与Bedrock Dedicated Server通信的框架
 
- - 对于用户来说，NilBridge可以做到简易上手，开箱即用，对于新手用户非常友好。
+图标以及形象由画师[Data07](https://github.com/cndata07)绘制
+
+</center>
 
 
 ## NilBridge的优点
@@ -18,44 +20,44 @@
    - 支持插件拓展
    - 开箱即用
 
-## 示例
-``` js
-NIL.SERVERS.get('生存服务器').sendCMD('list',(result)=>{
-    NIL.bots.getBot(114541).sendGroupMsg(11451419,result);
-});
-```
 
-这个例子获取了名为`生存服务器`的服务器，并且发送了一条`list`指令
+## 声明
 
-在处理指令回调时，获取了QQ号为`114514`的机器人，并且发送指令返回到群`11451419`
+### 一切开发旨在学习，请勿用于非法用途
 
-``` js
+- NilBridge 是完全免费且开放源代码的软件，仅供学习和娱乐用途使用
+- NilBridge 不会通过任何方式强制收取费用，或对使用者提出物质条件
+- NilBridge 由整个开源社区维护，并不是属于某个个体的作品，所有贡献者都享有其作品的著作权。
 
-function onStart(api){
-    api.logger.info('我被加载啦！');
-    api.listen('onMainMessageReceived',(e)=>{
-        e.reply(`收到${e.sender.qq}(${e.sender.nick})的消息！`);
-    });
-}
+### 许可证
 
-function onStop(){
-    //做些什么
-}
+    Copyright (C) 2021-2022 NilDev Technologies and contributors.
 
-module.exports = {
-    onStart,
-    onStop
-}
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
 
-```
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
 
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-这是一个最基础的插件例子
+`NilBridge` 采用 `AGPLv3` 协议开源。为了整个社区的良性发展，我们**强烈建议**您做到以下几点：
 
-在加载时注册了`onMainMessageReceived`监听器，监听主群消息
+- **间接接触（包括但不限于使用 `Http API` 或 跨进程技术）到 `NilBridge` 的软件使用 `AGPLv3` 开源**
+- **不鼓励，不支持一切商业使用**
 
-并在收到消息后向群聊中回复。
+鉴于项目的特殊性，开发团队可能在任何时间**停止更新**或**删除项目**。
 
-在`modules`文件夹新建一个文件夹，取你插件的名字，然后把这个写入`index.js`中
+### **NilBridge 的形象图及项目图标都拥有著作权保护。**
 
-这就是一个最简单的插件
+**在未经过允许的情况下，任何人都不可以使用形象图和图标，或本文初的有关 NilBridge 名称来历的介绍原文，用于商业用途或是放置在项目首页，或其他未许可的行为。**
+
+### 衍生软件需声明引用
+
+- 若引用 NilBridge 发布的软件包而不修改 NilBridge，则衍生项目需在描述的任意部位提及使用 NilBridge。
+- 若修改 NilBridge 源代码再发布，**或参考 NilBridge 内部实现发布另一个项目**，则衍生项目必须在**文章首部**或 'NilBridge' 相关内容**首次出现**的位置**明确声明**来源于本仓库 (`https://github.com/nilbridge/nilbridge2`)。不得扭曲或隐藏免费且开源的事实。

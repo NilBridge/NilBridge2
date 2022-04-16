@@ -6,6 +6,8 @@ function timeFormat(dur){
     return 0;
 }
 
+
+
 class checkme extends NIL.ModuleBase{
     onStart(api){  
         api.logger.info('加载成功');
