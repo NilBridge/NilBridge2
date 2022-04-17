@@ -4,51 +4,54 @@ const logger = new NIL.Logger("QQManager");
 NIL.EventManager.addEvent('QQManager', 'onRotboOnline');
 NIL.EventManager.addEvent('QQManager', 'onGroupMessageReceived');
 NIL.EventManager.addEvent('QQManager', 'onFriendMessageReceived');
-NIL.EventManager.addEvent('QQManager','onGroupMemberLeft');
+NIL.EventManager.addEvent('QQManager', 'onGroupMemberLeft');
 if (NIL.IO.exists('./Data/QQ.json') == false) {
     NIL.IO.WriteTo('./Data/QQ.json', '[]');
 }
 
 const Clients = new Map();
 
-function AddConfig(qq){
+function AddConfig(qq) {
     bots.push({
         "qq": qq,
         "pwd": "1234567",
         "platform": 2,
         "qrcode": true
     });
-    NIL.IO.WriteTo('./Data/QQ.json', JSON.stringify(bots,null,'\t'));
+    NIL.IO.WriteTo('./Data/QQ.json', JSON.stringify(bots, null, '\t'));
 }
 
 function addClient(qq) {
-    const client = createClient(qq, {platform: 2,kickoff: false,ignore_self: true,resend: true,brief: true});
-    Clients.set(qq,client);
+    const client = createClient(qq, { platform: 2, kickoff: false, ignore_self: true, resend: true, brief: true });
+    Clients.set(qq, client);
     client.on("system.login.qrcode", function (e) {
         process.stdin.once("data", (e) => {
             this.login();
-    });
+        });
     }).login();
-    addOnEvent(client,qq);
+    addOnEvent(client, qq);
 }
 
-function addOnEvent(client,qq){
-    client.on("system.online",getOnRobotOnline(qq));
+function addOnEvent(client, qq) {
+    client.on("system.online", getOnRobotOnline(qq));
     client.on('message.group', getOnMessage(qq));
-    client.on('notice.group.decrease',getOnMemeberLeft());
+    client.on('notice.group.decrease', getOnMemeberLeft());
 }
 
-function autoLogin(qq,pwd,platform,qrcode=true){
-    const client = createClient(qq, {platform,kickoff: false,ignore_self: true,resend: true,brief: true});
-    Clients.set(qq,client);
-    addOnEvent(client,qq);
-    if(qrcode){
+function autoLogin(qq, pwd, platform, qrcode = true) {
+    const client = createClient(qq, { platform, kickoff: false, ignore_self: true, resend: true, brief: true });
+    Clients.set(qq, client);
+    addOnEvent(client, qq);
+    client.on("system.login.slider", () => {
+        logger.warn(qq, '触发设备锁');
+    });
+    if (qrcode) {
         client.on("system.login.qrcode", function (e) {
             process.stdin.once("data", (e) => {
                 this.login();
             })
         }).login();
-    }else{
+    } else {
         client.login(pwd);
     }
 }
@@ -56,22 +59,23 @@ function autoLogin(qq,pwd,platform,qrcode=true){
 let bots = JSON.parse(NIL.IO.readFrom('./Data/QQ.json'));
 
 bots.forEach(bot => {
-    autoLogin(bot.qq,bot.pwd,bot.platform,bot.qrcode);
+    autoLogin(bot.qq, bot.pwd, bot.platform, bot.qrcode);
 });
+
 
 /**
  * 
  * @param {GroupMessageEvent} e 
  * @returns 
  */
-function getEventObj(e,qq) {
+function getEventObj(e, qq) {
     return {
-        self_id:qq,
+        self_id: qq,
         atme: e.atme,
         atall: e.atall,
         id: e.message_id,
         message: e.message,
-        member:e.member,
+        member: e.member,
         raw_message: e.raw_message,
         sender: {
             qq: e.sender.user_id,
@@ -94,30 +98,30 @@ function getEventObj(e,qq) {
     }
 }
 
-function getOnMessage(qq){
-    return (e)=>{
-        let obj = getEventObj(e,qq);
+function getOnMessage(qq) {
+    return (e) => {
+        let obj = getEventObj(e, qq);
         NIL.EventManager.on('onGroupMessageReceived', obj);
     }
 }
 
-function getOnMemeberLeft(){
-    return (e)=>{
-        NIL.EventManager.on('onGroupMemberLeft',e);
+function getOnMemeberLeft() {
+    return (e) => {
+        NIL.EventManager.on('onGroupMemberLeft', e);
     }
 }
 
-function getOnRobotOnline(qq){
-    return ()=>{
-        logger.info(qq,'登陆成功！');
-        NIL.EventManager.on('onRotboOnline', {qq});
+function getOnRobotOnline(qq) {
+    return () => {
+        logger.info(qq, '登陆成功！');
+        NIL.EventManager.on('onRotboOnline', { qq });
     }
 }
 
 NIL.NBCMD.regUserCmd('qq', 'QQ机器人模块', (arg) => {
     switch (arg[0]) {
         case 'login':
-            if(Clients.has(Number(arg[1]))){
+            if (Clients.has(Number(arg[1]))) {
                 logger.warn('这个账号已经登录了');
                 return;
             }
@@ -127,57 +131,57 @@ NIL.NBCMD.regUserCmd('qq', 'QQ机器人模块', (arg) => {
             logout(Number(arg[1]));
             break;
         case 'autologin':
-            switch(arg[1]){
+            switch (arg[1]) {
                 case "add":
-                    if(arg[2]){
-                        for(var i in bots){
-                            if(bots[i].qq.toString() == arg[2]){
-                                return '已存在一个自动登录项：'+arg[2];
+                    if (arg[2]) {
+                        for (var i in bots) {
+                            if (bots[i].qq.toString() == arg[2]) {
+                                return '已存在一个自动登录项：' + arg[2];
                             }
                         }
                         AddConfig(arg[2]);
                         return `添加登录项 ${arg[2]} 成功`;
-                    }else{
-                        return '参数错误：无法找到<qq>，键入qq autologin help查看帮助';         
+                    } else {
+                        return '参数错误：无法找到<qq>，键入qq autologin help查看帮助';
                     }
                 case "remove":
-                    for(var i in bots){
-                        if(bots[i].qq.toString() == arg[2]){
+                    for (var i in bots) {
+                        if (bots[i].qq.toString() == arg[2]) {
                             bots.splice(i);
-                            NIL.IO.WriteTo('./Data/QQ.json', JSON.stringify(bots,null,'\t'));
+                            NIL.IO.WriteTo('./Data/QQ.json', JSON.stringify(bots, null, '\t'));
                             return `移除登录项 ${arg[2]} 成功`;
                         }
                     }
-                    return '没有这样的登录项：'+arg[2];
+                    return '没有这样的登录项：' + arg[2];
                 default:
                     return `没有这样的指令：${arg[1]}`;
             }
         case 'help':
-            return ['qq login <qq> - 登录一个QQ账号','qq logout <qq> - 下线一个QQ账号','qq autologin <add|remove> <qq> - 自动登录设置'];
+            return ['qq login <qq> - 登录一个QQ账号', 'qq logout <qq> - 下线一个QQ账号', 'qq autologin <add|remove> <qq> - 自动登录设置'];
         default:
     }
 });
 
-function getBot(qq){
+function getBot(qq) {
     return Clients.get(qq.toString());
 }
 
-function logout(qq){
+function logout(qq) {
     Clients.get(qq).logout(false);
     Clients.delete(qq);
 }
 
-function logoutAll(){
-    Clients.forEach((v,k)=>{logout(k)});
+function logoutAll() {
+    Clients.forEach((v, k) => { logout(k) });
 }
 
 NIL.bots = {
     getBot,
     logout,
     logoutAll,
-    getAll:()=>{
+    getAll: () => {
         let re = [];
-        Clients.forEach((v,k)=>{re.push(k)});
+        Clients.forEach((v, k) => { re.push(k) });
         return re;
     }
 };

@@ -12,6 +12,7 @@ require('./Utils/ServerManager');
 require('./Utils/QQManager');
 require('./Utils/ModulesManager');
 const readline = require('readline');
+/*
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -40,7 +41,7 @@ rl.on('line', (input) => {
         }
     });
 });
-
+*/
 NIL.NBCMD.regUserCmd('stop', '关闭NilBridge', () => {
     NIL.EventManager.on('onNilBridgeStop', {});
     NIL.bots.logoutAll();
