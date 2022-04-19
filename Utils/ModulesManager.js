@@ -70,9 +70,7 @@ NIL.ModuleBase = class{
     onStop(){
 
     }
-    get moduleName(){
-        
-    }
+    static moduleName = 'undefined'
 };
 
 let modules = {};

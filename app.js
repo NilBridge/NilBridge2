@@ -1,5 +1,5 @@
 global.NIL = {};
-NIL.version = [1, 0, 4];
+NIL.version = [1, 0, 5];
 require('./Utils/Logger');
 const http = require('http');
 const { ErrorCode } = require('oicq');
