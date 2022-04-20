@@ -39,7 +39,7 @@ function addClient(qq) {
  */
 function addOnEvent(client, qq) {
     client.on("system.online", getOnRobotOnline(qq));
-    client.on('message.group', getOnMessage(qq));
+    client.on('message.group',getOnMessage(qq));
     client.on('notice.group.decrease', getOnMemeberLeft());
 }
 
@@ -72,7 +72,7 @@ class GroupMessageGroupArgs{
         /**
          * 群号
          */
-        this.id = e.id;
+        this.id = e.group_id;
         /**
          * 群名称
          */
