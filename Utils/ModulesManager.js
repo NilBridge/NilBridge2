@@ -3,10 +3,16 @@ const path = require('path');
 
 const logger = new NIL.Logger('ModulessManager');
 
+let debug = false;
+
 if (NIL.IO.exists('./modules/config.json') == false) {
     NIL.IO.WriteTo('./modules/config.json', '{}');
 }
 
+function debug_log(input){
+    if(debug)
+        logger.info(input);
+}
 
 // 又在copy代码啦，休息一下好不好呀
 class Module {
@@ -106,19 +112,30 @@ function unload(name) {
     let full_path = path.join(__dirname,'../modules',name);
     let index_path = require.resolve(full_path);
     if(require.cache[index_path] != undefined){
-        require.cache[index_path].children.forEach(m=>{
-            if(m.loaded) {
-                logger.info(`卸载${name.green}的子模块：${m.id.yellow}`);
-                delete require.cache[m.filename];
-            }
-        })
-        delete require.cache[full_path];
+        debug_log(`检测到 ${name} 加载了 ${require.cache[index_path].children.length}个子模块`);
+        delete_require(index_path);
         logger.info(`unloadinging ${name.green}`);
         modules[name].unload();
         delete modules[name];
         logger.info(`module ${name.green} unload`);
         return true;
     }
+    else return false;
+    
+}
+
+function delete_require(index_path){
+    debug_log(`开始执行卸载 ${index_path}`.green);
+    if(require.cache[index_path] == undefined)return;
+    require.cache[index_path].children.forEach(m=>{
+        if(m.loaded) {
+            delete_require(m.filename);
+            debug_log('delete '+m.filename);
+            delete require.cache[m.filename];
+        }
+    });
+    debug_log(`卸载 ${index_path} 完成`.yellow)
+    delete require.cache[index_path];
 }
 
 function load(p) {
@@ -178,6 +195,14 @@ NIL.NBCMD.regUserCmd('module','模块管理器',(arg)=>{
             str2.push('module reload - 重新加载所有模块');
             str2.push('module list - 列出所有装载的模块');
             return str2;
+        case 'debug':
+            switch(arg[1]){
+                case 'on':
+                    debug = true;
+                    return '调试模式已开启';
+            default:
+                return '调试模式已关闭';
+            }
         default:
             return '指令参数不足，键入module help查看命令';
     }
