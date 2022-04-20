@@ -104,9 +104,13 @@ function unload(name) {
         return;
     }
     let full_path = path.join(__dirname,'../modules',name);
-    if(require.cache[path.join(__dirname,'../modules',name)] != undefined){
-        require[full_path].children.forEach(m=>{
-            if(m.loaded) delete require.cache[m.filename];
+    let index_path = require.resolve(full_path);
+    if(require.cache[index_path] != undefined){
+        require.cache[index_path].children.forEach(m=>{
+            if(m.loaded) {
+                logger.info(`卸载${name.green}的子模块：${m.id.yellow}`);
+                delete require.cache[m.filename];
+            }
         })
         delete require.cache[full_path];
         logger.info(`unloadinging ${name.green}`);
