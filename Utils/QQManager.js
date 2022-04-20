@@ -99,7 +99,7 @@ class GroupMessageReceivedEventArgs {
         /**
          * 收信者QQ号
          */
-        this.self_id = qq;
+        this.self_id = e.self_id;
         /**
          * 是否提及收信者
          */
