@@ -83,13 +83,19 @@ class GroupMessageGroupArgs{
 class GroupMessageReceivedEventArgs {
     constructor(e,qq){
         /**
-         * 回复消息
+         * 回复这条信息
+         * @param {import('oicq').Sendable} content 要回复的消息
+         * @param {boolean} qcote 是否引用原消息
          */
-        this.reply = e.reply;
+        this.reply = (content,qcote)=>{
+            e.reply(content,qcote);
+        };
         /**
          * 撤回消息
          */
-        this.recall = e.recall;
+        this.recall = ()=>{
+            e.recall();
+        };
         /**
          * 收信者QQ号
          */
