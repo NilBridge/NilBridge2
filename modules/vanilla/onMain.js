@@ -114,7 +114,6 @@ NIL.NBCMD.regUserCmd('regexreload', '重载正则表达式', (arg) => {
     return '正则表达式重载完成';
 });
 
-
 function onMain(e) {
     if (e.self_id != cfg.self_id) return;
     let text = getText(e);

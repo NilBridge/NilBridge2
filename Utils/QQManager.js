@@ -32,6 +32,11 @@ function addClient(qq) {
     addOnEvent(client, qq);
 }
 
+/**
+ * 
+ * @param {Client} client 
+ * @param {*} qq 
+ */
 function addOnEvent(client, qq) {
     client.on("system.online", getOnRobotOnline(qq));
     client.on('message.group', getOnMessage(qq));
@@ -62,46 +67,98 @@ bots.forEach(bot => {
     autoLogin(bot.qq, bot.pwd, bot.platform, bot.qrcode);
 });
 
-
-/**
- * 
- * @param {GroupMessageEvent} e 
- * @returns 
- */
-function getEventObj(e, qq) {
-    return {
-        self_id: qq,
-        atme: e.atme,
-        atall: e.atall,
-        id: e.message_id,
-        message: e.message,
-        member: e.member,
-        raw_message: e.raw_message,
-        sender: {
-            qq: e.sender.user_id,
-            nick: e.sender.nickname,
-            isAdmin: e.sender.role != 'member',
-            send(msg) {
-                NIL.bots.getBot(qq).sendPrivateMsg(e.user_id, msg);
-            }
-        },
-        group: {
-            id: e.group_id,
-            name: e.group_name
-        },
-        recall() {
-            e.recall();
-        },
-        reply(msg, at = false) {
-            e.reply(msg, at);
-        }
+class GroupMessageGroupArgs{
+    constructor(e){
+        /**
+         * 群号
+         */
+        this.id = e.id;
+        /**
+         * 群名称
+         */
+        this.name = e.name;
     }
 }
 
+class GroupMessageReceivedEventArgs {
+    constructor(e,qq){
+        /**
+         * 收信者QQ号
+         */
+        this.self_id = qq;
+        /**
+         * 是否提及收信者
+         */
+        this.atme = e.atme;
+        /**
+         * 是否提及全体
+         */
+        this.atall = e.atall;
+        /**
+         * 消息id
+         * 
+         * 可用`client.getMsg`方法获取具体信息参数
+         */
+        this.id = e.message_id;
+        /**
+         * 消息对象
+         * 
+         * 详见：https://takayama-lily.github.io/oicq/classes/GroupMessage.html#message
+         */
+        this.message = e.message;
+        /**
+         * 成员对象
+         * 
+         * 详见：https://takayama-lily.github.io/oicq/index.html#class-member
+         */
+        this.member = e.member;
+        /**
+         * 字符串化的消息
+         */
+        this.raw_message = e.raw_message;
+        this.sender = {
+            qq: e.sender.user_id,
+            /**
+             * 群昵称
+             */
+            nick: e.sender.nickname,
+            /**
+             * 是否为群管理员
+             */
+            isAdmin: e.sender.role != 'member',
+            /**
+             * 
+             * @param {import('oicq').Sendable} msg 发送的消息
+             */
+            send(msg) {
+                NIL.bots.getBot(qq).sendPrivateMsg(e.user_id, msg);
+            }
+        }
+        /**
+         * 群聊对象
+         */
+        this.group = new GroupMessageGroupArgs(e.group);
+    }
+    /**
+     * 撤回消息
+     */
+    recall() {
+        e.recall();
+    }
+    /**
+     * 
+     * @param {import('oicq').Sendable} msg 发送的消息
+     * @param {Boolean} at 是否提及发信人 
+     */
+    reply(msg, at = false) {
+        e.reply(msg, at);
+    }
+}
+
+
 function getOnMessage(qq) {
     return (e) => {
-        let obj = getEventObj(e, qq);
-        NIL.EventManager.on('onGroupMessageReceived', obj);
+        NIL.EventManager.on('onGroupMessageReceived', new GroupMessageReceivedEventArgs(e,qq));
     }
 }
 
