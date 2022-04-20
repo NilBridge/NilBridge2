@@ -82,6 +82,7 @@ class GroupMessageGroupArgs{
 
 class GroupMessageReceivedEventArgs {
     constructor(e,qq){
+        this.e = e;
         /**
          * 收信者QQ号
          */
@@ -143,7 +144,7 @@ class GroupMessageReceivedEventArgs {
      * 撤回消息
      */
     recall() {
-        e.recall();
+        this.e.recall();
     }
     /**
      * 
@@ -151,16 +152,14 @@ class GroupMessageReceivedEventArgs {
      * @param {Boolean} at 是否提及发信人 
      */
     reply(msg, at = false) {
-        e.reply(msg, at);
+        this.e.reply(msg, at);
     }
 }
 
 
 function getOnMessage(qq) {
     return (e) => {
-        let obj = new GroupMessageReceivedEventArgs(e,qq);
-        console.log(obj);
-        NIL.EventManager.on('onGroupMessageReceived', obj);
+        NIL.EventManager.on('onGroupMessageReceived', new GroupMessageReceivedEventArgs(e,qq));
     }
 }
 
