@@ -82,7 +82,14 @@ class GroupMessageGroupArgs{
 
 class GroupMessageReceivedEventArgs {
     constructor(e,qq){
-        this.e = e;
+        /**
+         * 回复消息
+         */
+        this.reply = e.reply;
+        /**
+         * 撤回消息
+         */
+        this.recall = e.recall;
         /**
          * 收信者QQ号
          */
@@ -139,20 +146,6 @@ class GroupMessageReceivedEventArgs {
          * 群聊对象
          */
         this.group = new GroupMessageGroupArgs(e.group);
-    }
-    /**
-     * 撤回消息
-     */
-    recall() {
-        this.e.recall();
-    }
-    /**
-     * 
-     * @param {import('oicq').Sendable} msg 发送的消息
-     * @param {Boolean} at 是否提及发信人 
-     */
-    reply(msg, at = false) {
-        this.e.reply(msg, at);
     }
 }
 
