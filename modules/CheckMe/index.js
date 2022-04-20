@@ -6,7 +6,7 @@ function timeFormat(dur){
     return 0;
 }
 
-
+const { segment } = require("oicq");
 
 class checkme extends NIL.ModuleBase{
     onStart(api){  

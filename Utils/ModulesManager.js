@@ -126,6 +126,7 @@ function unload(name) {
 
 function delete_require(index_path){
     debug_log(`开始执行卸载 ${index_path}`.green);
+    if(index_path.includes('\\node_modules\\oicq\\lib\\index.js')) return;
     if(require.cache[index_path] == undefined)return;
     require.cache[index_path].children.forEach(m=>{
         if(m.loaded) {
