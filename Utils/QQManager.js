@@ -158,7 +158,9 @@ class GroupMessageReceivedEventArgs {
 
 function getOnMessage(qq) {
     return (e) => {
-        NIL.EventManager.on('onGroupMessageReceived', new GroupMessageReceivedEventArgs(e,qq));
+        let obj = new GroupMessageReceivedEventArgs(e,qq);
+        console.log(obj);
+        NIL.EventManager.on('onGroupMessageReceived', obj);
     }
 }
 
