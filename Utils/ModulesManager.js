@@ -103,12 +103,18 @@ function unload(name) {
         logger.warn(`模块 [${name}] 未找到`);
         return;
     }
-    delete require.cache[require.resolve(path.join(__dirname,'../modules',name))];
-    logger.info(`unloadinging ${name.green}`);
-    modules[name].unload();
-    delete modules[name];
-    logger.info(`module ${name.green} unload`);
-    return true;
+    let full_path = path.join(__dirname,'../modules',name);
+    if(require.cache[path.join(__dirname,'../modules',name)] != undefined){
+        require[full_path].children.forEach(m=>{
+            if(m.loaded) delete require.cache[m.filename];
+        })
+        delete require.cache[full_path];
+        logger.info(`unloadinging ${name.green}`);
+        modules[name].unload();
+        delete modules[name];
+        logger.info(`module ${name.green} unload`);
+        return true;
+    }
 }
 
 function load(p) {
