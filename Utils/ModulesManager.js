@@ -11,7 +11,7 @@ if (NIL.IO.exists('./modules/config.json') == false) {
 
 function debug_log(input){
     if(debug)
-        logger.info(input);
+        logger.info('debug'.grey,input);
 }
 
 // 又在copy代码啦，休息一下好不好呀
@@ -144,7 +144,9 @@ function load(p) {
     logger.info(`loading ${p}`);
     try{
         var part = require(pt);
-        modules[p] = new Module(p.split(".")[0], part);
+        let mname = p.split(".")[0];
+        debug_log(`自动设置 [${p.cyan}] Logger头 为 [${mname.green}]`);
+        modules[p] = new Module(mname, part);
         part.onStart(modules[p]);
         return true;
     }catch(err){
