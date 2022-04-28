@@ -78,7 +78,9 @@ NIL.ModuleBase = class {
     }
     static moduleName = 'undefined'
 };
-
+/**
+ * 全部模块
+ */
 let modules = {};
 
 function loadAll() {
