@@ -95,7 +95,7 @@ function onRegex(str, e) {
                     let result = '';
                     let sends = {};
                     item.servers.forEach(s=>{
-                        NIL.SERVERS.get(s.name).sendCMD(s.cmd,(re)=>{
+                        NIL.SERVERS.get(s.name).sendCMD(buildString(s.cmd,tmp),(re)=>{
                             sends[s.name] = null;
                             if(s.reply){
                                 sends[s.name] = `[${s.name}]：${re}\n`;
