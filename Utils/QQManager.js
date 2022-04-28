@@ -1,7 +1,7 @@
 "use strict" //oicq需要开启严格模式
 const { createClient, segment, Message, Client } = require('oicq');
 const logger = new NIL.Logger("QQManager");
-NIL.EventManager.addEvent('QQManager', 'onRotboOnline');
+NIL.EventManager.addEvent('QQManager', 'onRobotOnline');
 NIL.EventManager.addEvent('QQManager', 'onGroupMessageReceived');
 NIL.EventManager.addEvent('QQManager', 'onFriendMessageReceived');
 NIL.EventManager.addEvent('QQManager', 'onGroupMemberLeft');
@@ -171,7 +171,7 @@ function getOnMemeberLeft() {
 function getOnRobotOnline(qq) {
     return () => {
         logger.info(qq, '登陆成功！');
-        NIL.EventManager.on('onRotboOnline', { qq });
+        NIL.EventManager.on('onRobotOnline', { qq });
     }
 }
 
@@ -236,9 +236,4 @@ NIL.bots = {
     getBot,
     logout,
     logoutAll,
-    getAll: () => {
-        let re = [];
-        Clients.forEach((v, k) => { re.push(k) });
-        return re;
-    }
 };
