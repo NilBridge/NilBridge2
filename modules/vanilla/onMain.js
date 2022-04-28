@@ -111,6 +111,7 @@ function onRegex(str, e) {
                                     result += `[${i}]：执行结果获取超时`;
                                 }
                             }
+                            e.reply(result);
                         }, 3000);
                     }
                 case 'http_get':
