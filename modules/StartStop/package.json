@@ -1,5 +1,5 @@
 {
-    "name":"vanilla",
+    "name":"StartStop",
     "version": "1.0.0",
     "description": "start and stop server in nbcmd",
     "author": "Lition",

@@ -57,4 +57,3 @@ process.on('unhandledRejection', (reason, promise) => {
     logger.warn(`error type :${ErrorCode[reason.code].bgYellow}`);
     logger.warn(`errorcode : ${reason.code.toString().yellow},descr : ${reason.message.bgRed}`);
 });
-
