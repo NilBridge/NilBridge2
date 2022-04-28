@@ -3,7 +3,7 @@ const langhelper = new Lang('lang.ini');
 
 function SendTextAll(text) {
     NIL.SERVERS.forEach((s, k) => {
-        s.sendText(text);
+        s.sendText(textFilter(text));
     });
 }
 
@@ -31,6 +31,12 @@ var GetFormatText = function (e) {
         }
     }
     return rt;
+}
+
+function textFilter(text){
+    if (text.length > 50)
+        return text.substring(0,text.indexOf(">")+1) + " 此消息过长,请在群聊中查看详情";
+    return text;
 }
 
 module.exports = onChat;
