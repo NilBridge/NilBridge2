@@ -109,9 +109,12 @@ function onRegex(str, e) {
                             sends[s.name] = null;
                             if(s.reply){
                                 sends[s.name] = `[${s.name}]：${fomatCMD(re)}\n`;
+                            }else{
+                                sends[s.name] = '您设置了忽略获取结果';
                             }
                         });
                     });
+                    let timeout = item.timeout == undefined ? 3000 : item.timeout;
                     if(item.reply){
                         setTimeout(() => {
                             for(let i in sends){
@@ -122,7 +125,7 @@ function onRegex(str, e) {
                                 }
                             }
                             e.reply(result);
-                        }, 3000);
+                        }, timeout);
                     }
                     break;
                 case 'http_get':
