@@ -38,6 +38,12 @@ function RuncmdAll(cmd, self) {
     });
 }
 
+/**
+ * 
+ * @param {String} str 
+ * @param {RegExpMatchArray} reg 
+ * @returns 
+ */
 function buildString(str, reg) {
     var i = 0;
     reg.forEach(s => {
@@ -58,7 +64,11 @@ function fomatCMD(result) {
 }
 
 
-
+/**
+ * 
+ * @param {String} str 
+ * @param {*} e 
+ */
 function onRegex(str, e) {
     for (let i in regexs.group) {
         if (NIL._vanilla.isAdmin(e.sender.qq) == false && regexs.group[i].permission == 1) continue;
@@ -98,7 +108,7 @@ function onRegex(str, e) {
                         NIL.SERVERS.get(s.name).sendCMD(buildString(s.cmd,tmp),(re)=>{
                             sends[s.name] = null;
                             if(s.reply){
-                                sends[s.name] = `[${s.name}]：${re}\n`;
+                                sends[s.name] = `[${s.name}]：${fomatCMD(re)}\n`;
                             }
                         });
                     });
@@ -114,6 +124,7 @@ function onRegex(str, e) {
                             e.reply(result);
                         }, 3000);
                     }
+                    break;
                 case 'http_get':
                     http.get(item.url, (res) => {
                         let html = ""
