@@ -91,6 +91,20 @@ function onRegex(str, e) {
                         }
                     });
                     break;
+                case "runcmd":
+                    let result = '';
+                    item.servers.forEach(s=>{
+                        NIL.SERVERS.get(s.name).sendCMD(s.cmd,(re)=>{
+                            if(s.reply){
+                                result += `[${s.name}]：${re}\n`;
+                            }
+                        });
+                    });
+                    if(item.reply){
+                        setTimeout(() => {
+                            e.reply(result);
+                        }, 5000);
+                    }
                 case 'http_get':
                     http.get(item.url, (res) => {
                         let html = ""
