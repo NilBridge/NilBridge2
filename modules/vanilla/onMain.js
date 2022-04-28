@@ -93,17 +93,25 @@ function onRegex(str, e) {
                     break;
                 case "runcmd":
                     let result = '';
+                    let sends = {};
                     item.servers.forEach(s=>{
                         NIL.SERVERS.get(s.name).sendCMD(s.cmd,(re)=>{
+                            sends[s.name] = null;
                             if(s.reply){
-                                result += `[${s.name}]：${re}\n`;
+                                sends[s.name] = `[${s.name}]：${re}\n`;
                             }
                         });
                     });
                     if(item.reply){
                         setTimeout(() => {
-                            e.reply(result);
-                        }, 5000);
+                            for(let i in sends){
+                                if(sends[i] != null){
+                                    result += sends[i];
+                                }else{
+                                    result += `[${i}]：执行结果获取超时`;
+                                }
+                            }
+                        }, 3000);
                     }
                 case 'http_get':
                     http.get(item.url, (res) => {
