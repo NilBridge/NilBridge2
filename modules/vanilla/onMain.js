@@ -105,8 +105,12 @@ function onRegex(str, e) {
                     let result = '';
                     let sends = {};
                     item.servers.forEach(s=>{
+                        sends[s.name] = null;
+                        if(NIL.SERVERS.has(s.name)==false){
+                            e.reply(`没有名为 ${s.name} 的服务器！！正则表达式执行失败！！`);
+                            return;
+                        }
                         NIL.SERVERS.get(s.name).sendCMD(buildString(s.cmd,tmp),(re)=>{
-                            sends[s.name] = null;
                             if(s.reply){
                                 sends[s.name] = `[${s.name}]：${fomatCMD(re)}\n`;
                             }else{
