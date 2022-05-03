@@ -3,7 +3,6 @@ const langhelper = new Lang('lang.ini');
 
 function SendTextAll(text) {
     NIL.SERVERS.forEach((s, k) => {
-        console.log("测试>>>>>>>>>>>>>>>>>>>:\n"+text);
         s.sendText(text);
     });
 }
