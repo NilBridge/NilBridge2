@@ -40,7 +40,7 @@ function save_playerdata() {
     NIL.IO.WriteTo(path.join(__dirname, 'playerdata.json'), JSON.stringify(playerdata, null, '\t'));
 }
 
-module.exports = {
+class vanilla extends NIL.ModuleBase {
     onStart(api) {
         api.addEvent('onMainMessageReceived');
         api.addEvent('onChatMessageReceived');
@@ -85,11 +85,15 @@ module.exports = {
             get_all,
             isAdmin
         };
-    },
+    }
     onStop() {
         save_playerdata();
     }
 }
+
+vanilla.can_be_reload = true;
+vanilla.moduleName = 'vanilla';
+vanilla.can_reload_require = false;
 
 function onLeft(e){
     if(e.group_id == cfg.group.main && e.self_id == cfg.self_id){
@@ -168,3 +172,4 @@ function get_all(){
     return playerdata;
 }
 
+module.exports = new vanilla;
