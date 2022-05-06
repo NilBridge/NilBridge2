@@ -3,7 +3,7 @@ const langhelper = new Lang('lang.ini');
 
 function SendTextAll(text) {
     NIL.SERVERS.forEach((s, k) => {
-        s.sendText(textFilter(text));
+        s.sendText(text);
     });
 }
 
@@ -26,17 +26,14 @@ var GetFormatText = function (e) {
                 rt += langhelper.get("MESSAGE_IMAGE");
                 break;
             case "text":
-                rt += e.message[i].text;
+                if (e.message[i].text.length>50)
+                    rt += langhelper.get("MESSAGE_TOO_LONG");
+                else
+                    rt += e.message[i].text;
                 break;
         }
     }
     return rt;
-}
-
-function textFilter(text){
-    if (text.length > 50)
-        return text.substring(0,text.indexOf(">")+1) + " 此消息过长,请在群聊中查看详情";
-    return text;
 }
 
 module.exports = onChat;
