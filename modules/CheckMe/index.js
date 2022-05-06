@@ -21,9 +21,6 @@ class checkme extends NIL.ModuleBase{
             }
         });
     }
-    onStop(){
-
-    }
 }
 
 module.exports = new checkme;

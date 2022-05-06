@@ -74,6 +74,7 @@ function onmessage(name,k,iv){
 
 NIL.EventManager.listen('MAIN','onWebsocketReceived',(dt)=>{
     let data = JSON.parse(dt.message);
+    if(data.params.id == undefined)return;
     if(callbacks[data.params.id] != undefined){
         callbacks[data.params.id](data.params.result);
         delete callbacks[data.params.id];

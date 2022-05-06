@@ -65,18 +65,29 @@ class Module {
 NIL.ModuleBase = class {
     /**
      * 模块加载时调用
-     * @param api 初始API
+     * @param {Module} api 初始API
      */
     onStart(api) {
 
-    }
+    };
     /**
      * 模块卸载时调用
      */
     onStop() {
 
-    }
-    static moduleName = 'undefined'
+    };
+    /**
+     * 模块名称
+     */
+    static moduleName = 'undefined';
+    /**
+     * 可以被`module reload`命令重载
+     */
+    static can_be_reload = true;
+    /**
+     * 可以重载`require`项目
+     */
+    static can_reload_require = true;
 };
 /**
  * 全部模块
@@ -85,7 +96,7 @@ let modules = {};
 
 function loadAll() {
     var cfg = {};
-    var pls = require('../modules/config.json');
+    var pls = JSON.parse(NIL.IO.readFrom(path.join(__dirname,'../modules/config.json')));
     load('vanilla');
     fs.readdirSync('./modules/').forEach(p => {
         if (p != 'config.json' && p != 'vanilla') {
@@ -114,8 +125,10 @@ function unload(name) {
     let full_path = path.join(__dirname, '../modules', name);
     let index_path = require.resolve(full_path);
     if (require.cache[index_path] != undefined) {
-        debug_log(`检测到 ${name} 加载了 ${require.cache[index_path].children.length}个子模块`);
-        delete_require(index_path);
+        if(modules[name].can_reload_require){
+            debug_log(`检测到 ${name} 加载了 ${require.cache[index_path].children.length}个子模块`);
+            delete_require(index_path);
+        }
         logger.info(`unloadinging ${name.green}`);
         modules[name].unload();
         delete modules[name];
@@ -123,12 +136,11 @@ function unload(name) {
         return true;
     }
     else return false;
-
 }
 
 function delete_require(index_path) {
     debug_log(`开始执行卸载 ${index_path}`.green);
-    if (index_path.includes('\\node_modules\\oicq\\lib\\index.js')) return;
+    if (index_path.includes('oicq\\lib\\index.js')) return;
     if (require.cache[index_path] == undefined) return;
     require.cache[index_path].children.forEach(m => {
         if (m.loaded) {

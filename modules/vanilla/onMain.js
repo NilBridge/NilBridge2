@@ -38,6 +38,12 @@ function RuncmdAll(cmd, self) {
     });
 }
 
+/**
+ * 
+ * @param {String} str 
+ * @param {RegExpMatchArray} reg 
+ * @returns 
+ */
 function buildString(str, reg) {
     var i = 0;
     reg.forEach(s => {
@@ -58,7 +64,11 @@ function fomatCMD(result) {
 }
 
 
-
+/**
+ * 
+ * @param {String} str 
+ * @param {*} e 
+ */
 function onRegex(str, e) {
     for (let i in regexs.group) {
         if (NIL._vanilla.isAdmin(e.sender.qq) == false && regexs.group[i].permission == 1) continue;
@@ -95,13 +105,20 @@ function onRegex(str, e) {
                     let result = '';
                     let sends = {};
                     item.servers.forEach(s=>{
-                        NIL.SERVERS.get(s.name).sendCMD(s.cmd,(re)=>{
-                            sends[s.name] = null;
+                        sends[s.name] = null;
+                        if(NIL.SERVERS.has(s.name)==false){
+                            e.reply(`没有名为 ${s.name} 的服务器！！正则表达式执行失败！！`);
+                            return;
+                        }
+                        NIL.SERVERS.get(s.name).sendCMD(buildString(s.cmd,tmp),(re)=>{
                             if(s.reply){
-                                sends[s.name] = `[${s.name}]：${re}\n`;
+                                sends[s.name] = `[${s.name}]：${fomatCMD(re)}\n`;
+                            }else{
+                                sends[s.name] = '您设置了忽略获取结果';
                             }
                         });
                     });
+                    let timeout = item.timeout == undefined ? 3000 : item.timeout;
                     if(item.reply){
                         setTimeout(() => {
                             for(let i in sends){
@@ -112,8 +129,9 @@ function onRegex(str, e) {
                                 }
                             }
                             e.reply(result);
-                        }, 3000);
+                        }, timeout);
                     }
+                    break;
                 case 'http_get':
                     http.get(item.url, (res) => {
                         let html = ""
