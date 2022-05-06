@@ -77,17 +77,13 @@ NIL.ModuleBase = class {
 
     };
     /**
-     * 模块名称
-     */
-    static moduleName = 'undefined';
-    /**
      * 可以被`module reload`命令重载
      */
-    static can_be_reload = true;
+    can_be_reload = true;
     /**
      * 可以重载`require`项目
      */
-    static can_reload_require = true;
+    can_reload_require = true;
 };
 /**
  * 全部模块
@@ -124,11 +120,14 @@ function unload(name) {
     }
     let full_path = path.join(__dirname, '../modules', name);
     let index_path = require.resolve(full_path);
+    console.log(modules[name]._module);
     if (require.cache[index_path] != undefined) {
-        if(modules[name].can_reload_require){
+        try{
             debug_log(`检测到 ${name} 加载了 ${require.cache[index_path].children.length}个子模块`);
-            delete_require(index_path);
-        }
+            if(modules[name]._module.can_reload_require){
+                delete_require(index_path);
+            }
+        }catch(err){logger.error(err);};
         logger.info(`unloadinging ${name.green}`);
         modules[name].unload();
         delete modules[name];

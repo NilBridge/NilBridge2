@@ -89,11 +89,9 @@ class vanilla extends NIL.ModuleBase {
     onStop() {
         save_playerdata();
     }
+    can_reload_require = false;
 }
 
-vanilla.can_be_reload = true;
-vanilla.moduleName = 'vanilla';
-vanilla.can_reload_require = false;
 
 function onLeft(e){
     if(e.group_id == cfg.group.main && e.self_id == cfg.self_id){
