@@ -120,7 +120,6 @@ function unload(name) {
     }
     let full_path = path.join(__dirname, '../modules', name);
     let index_path = require.resolve(full_path);
-    console.log(modules[name]._module);
     if (require.cache[index_path] != undefined) {
         try{
             debug_log(`检测到 ${name} 加载了 ${require.cache[index_path].children.length}个子模块`);
