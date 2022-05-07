@@ -2,7 +2,7 @@ global.NIL = {};
 NIL.version = [1, 0, 7];
 require('./Utils/Logger');
 const { ErrorCode } = require('oicq');
-var logger = new NIL.Logger('Main');
+var logger = new NIL.Logger('MAIN');
 require('./Utils/CMDManager');
 require('./Utils/EventManager');
 require('./Utils/FileSystem');
