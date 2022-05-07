@@ -16,13 +16,14 @@ function debug_log(input) {
 
 // 又在copy代码啦，休息一下好不好呀
 class Module {
-    constructor(name, module) {
+    constructor(name, module,dir) {
         this._module = module;
         this._name = name;
         this._EventIDs = [];
         this._Cmds = [];
         this._regEvents = [];
         this._logger = new NIL.Logger(this._name);
+        this._dir = dir;
     }
     listen(evt, eventCallback) {
         logger.info(`${this._name.bgMagenta} listening ${evt}`);
@@ -47,7 +48,7 @@ class Module {
         this._regEvents.forEach(NIL.EventManager.remEvent);
         this._Cmds.forEach(NIL.NBCMD.remUserCmd);
         this._EventIDs.forEach(NIL.EventManager.remCallback);
-        var pt = path.join(__dirname, '../modules', this._name);
+        var pt = path.join(__dirname, '../modules', this._dir);
         delete require.cache[require.resolve(pt)];
     }
     regCMD(cmd, desc, callback) {
@@ -116,9 +117,10 @@ function unloadAll() {
 function unload(name) {
     if (typeof modules[name] == 'undefined') {
         logger.warn(`模块 [${name}] 未找到`);
-        return;
+        return false;
     }
-    let full_path = path.join(__dirname, '../modules', name);
+    let full_path = path.join(__dirname, '../modules', modules[name]._dir);
+    debug_log(`找到插件 [${name}] 位于 ${full_path}`);
     let index_path = require.resolve(full_path);
     if (require.cache[index_path] != undefined) {
         try{
@@ -157,11 +159,11 @@ function load(p) {
     let jsonpath = path.join(__dirname, '../modules', p, 'package.json');
     if (NIL.IO.exists(jsonpath)) {
         let package = JSON.parse(NIL.IO.readFrom(jsonpath));
-        logger.info(`loading ${package.name} by ${package.author}`);
+        logger.info(`loading ${package.name.green} by ${package.author.cyan}`);
         try {
             var part = require(pt);
             debug_log(`自动设置 [${p.cyan}] Logger头 为 [${package.name.green}]`);
-            modules[p] = new Module(package.name, part);
+            modules[p] = new Module(package.name, part,p);
             part.onStart(modules[p]);
             return true;
         } catch (err) {
