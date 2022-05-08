@@ -108,7 +108,7 @@ function loadAll() {
         }
     });
     fs.writeFileSync('./modules/config.json', JSON.stringify(cfg, null, '\t'), 'utf8');
-    logger.info(`成功载入了${count.toString().gray} 个模块`);
+    logger.info(`成功载入了 ${count.toString().green} 个模块`);
 }
 
 function unloadAll() {
