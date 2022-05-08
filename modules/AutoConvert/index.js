@@ -19,7 +19,8 @@ function onStart(api){
     }    
 }
 
-module.exports = {
-    onStart,
-    onStop(){}
+class CheckMe extends NIL.ModuleBase{
+    onStart = onStart
 }
+
+module.exports = new CheckMe;
