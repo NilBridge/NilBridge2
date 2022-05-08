@@ -95,17 +95,20 @@ function loadAll() {
     var cfg = {};
     var pls = JSON.parse(NIL.IO.readFrom(path.join(__dirname,'../modules/config.json')));
     load('vanilla');
+    let count = 0;
     fs.readdirSync('./modules/').forEach(p => {
         if (p != 'config.json' && p != 'vanilla') {
             try {
                 if (pls[p] == false) { cfg[p] = false; return; }
                 cfg[p] = load(p);
+                count+=1;
             } catch (err) {
                 logger.error(err);
             }
         }
     });
     fs.writeFileSync('./modules/config.json', JSON.stringify(cfg, null, '\t'), 'utf8');
+    logger.info(`成功载入了${count.toString().gray} 个模块`);
 }
 
 function unloadAll() {

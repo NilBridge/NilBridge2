@@ -21,6 +21,12 @@ function remEvent(evt){
     }
 }
 
+/**
+ * 
+ * @param {String} evt 
+ * @param {Object} parmas 
+ * @returns 
+ */
 function on(evt,parmas){
     if(Events[evt]==undefined){
         logger.warn('no such event : '+evt);
@@ -74,6 +80,13 @@ function remCallback(id){
     return false;
 }
 
+/**
+ * 
+ * @param {String} plname 模块名称
+ * @param {String} evt 事件名称
+ * @param {function(param)} callback 事件回调
+ * @returns 
+ */
 function listen(plname,evt,callback){
     if(Events[evt]==undefined){
         logger.warn(`no such event : ${evt.bgRed}, ${plname.bgYellow} listen failed`);
