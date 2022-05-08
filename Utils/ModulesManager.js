@@ -110,7 +110,12 @@ function loadAll() {
 
 function unloadAll() {
     for (let pl in modules) {
-        unload(pl);
+        if(modules[pl]._module.can_be_reload){
+            debug_log(`开始卸载 ${modules[pl]._name}`);
+            unload(pl);
+        }else{
+            debug_log(`插件 ${modules[pl]._name} 设置了禁止重载，已跳过`);
+        }
     }
 }
 
@@ -159,6 +164,10 @@ function load(p) {
     let jsonpath = path.join(__dirname, '../modules', p, 'package.json');
     if (NIL.IO.exists(jsonpath)) {
         let package = JSON.parse(NIL.IO.readFrom(jsonpath));
+        if(modules[package.name] != undefined){
+            debug_log(`模块 ${package.name.green} 已被载入，跳过加载`);
+            return false;
+        }
         logger.info(`loading ${package.name.green} by ${package.author.cyan}`);
         try {
             var part = require(pt);
