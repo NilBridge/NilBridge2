@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-
 const logger = new NIL.Logger('ModulessManager');
 
 let debug = false;
@@ -16,7 +15,7 @@ function debug_log(input) {
 
 // 又在copy代码啦，休息一下好不好呀
 class Module {
-    constructor(name, module,dir) {
+    constructor(name, module, dir) {
         this._module = module;
         this._name = name;
         this._EventIDs = [];
@@ -93,7 +92,7 @@ let modules = {};
 
 function loadAll() {
     var cfg = {};
-    var pls = JSON.parse(NIL.IO.readFrom(path.join(__dirname,'../modules/config.json')));
+    var pls = JSON.parse(NIL.IO.readFrom(path.join(__dirname, '../modules/config.json')));
     load('vanilla');
     let count = 0;
     fs.readdirSync('./modules/').forEach(p => {
@@ -101,7 +100,7 @@ function loadAll() {
             try {
                 if (pls[p] == false) { cfg[p] = false; return; }
                 cfg[p] = load(p);
-                count+=1;
+                count += 1;
             } catch (err) {
                 logger.error(err);
             }
@@ -113,10 +112,10 @@ function loadAll() {
 
 function unloadAll() {
     for (let pl in modules) {
-        if(modules[pl]._module.can_be_reload){
+        if (modules[pl]._module.can_be_reload) {
             debug_log(`开始卸载 ${modules[pl]._name}`);
             unload(pl);
-        }else{
+        } else {
             debug_log(`插件 ${modules[pl]._name} 设置了禁止重载，已跳过`);
         }
     }
@@ -131,12 +130,12 @@ function unload(name) {
     debug_log(`找到插件 [${name}] 位于 ${full_path}`);
     let index_path = require.resolve(full_path);
     if (require.cache[index_path] != undefined) {
-        try{
+        try {
             debug_log(`检测到 ${name} 加载了 ${require.cache[index_path].children.length}个子模块`);
-            if(modules[name]._module.can_reload_require){
+            if (modules[name]._module.can_reload_require) {
                 delete_require(index_path);
             }
-        }catch(err){logger.error(err);};
+        } catch (err) { logger.error(err); };
         logger.info(`unloadinging ${name.green}`);
         modules[name].unload();
         delete modules[name];
@@ -167,7 +166,7 @@ function load(p) {
     let jsonpath = path.join(__dirname, '../modules', p, 'package.json');
     if (NIL.IO.exists(jsonpath)) {
         let package = JSON.parse(NIL.IO.readFrom(jsonpath));
-        if(modules[package.name] != undefined){
+        if (modules[package.name] != undefined) {
             debug_log(`模块 ${package.name.green} 已被载入，跳过加载`);
             return false;
         }
@@ -175,7 +174,7 @@ function load(p) {
         try {
             var part = require(pt);
             debug_log(`自动设置 [${p.cyan}] Logger头 为 [${package.name.green}]`);
-            modules[p] = new Module(package.name, part,p);
+            modules[p] = new Module(package.name, part, p);
             part.onStart(modules[p]);
             return true;
         } catch (err) {
@@ -188,6 +187,7 @@ function load(p) {
 }
 
 loadAll();
+
 
 NIL.NBCMD.regUserCmd('module', '模块管理器', (arg) => {
     switch (arg[0]) {

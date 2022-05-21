@@ -1,0 +1,11 @@
+{
+    "name":"backuphelper",
+    "version": "1.0.0",
+    "description": "backup worlds in group",
+    "author": "Lition",
+    "license": "GNU Affero General Public License v3.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NilBridge/backuphelper"
+    }
+}
