@@ -190,55 +190,65 @@ loadAll();
 
 
 NIL.NBCMD.regUserCmd('module', '模块管理器', (arg) => {
-    switch (arg[0]) {
-        case 'load':
-            if (modules[arg[1]] != undefined) {
-                return `模块 [${arg[1]}] 已被加载`;
-            } else {
-                if (load(arg[1])) {
-                    return `模块 [${arg[1]}] 加载成功`;
+    return new Promise((res,rej)=>{
+        switch (arg[0]) {
+            case 'load':
+                if (modules[arg[1]] != undefined) {
+                    res(`模块 [${arg[1]}] 已被加载`);
                 } else {
-                    return `模块 [${arg[1]}] 加载失败`;
+                    if (load(arg[1])) {
+                        res(`模块 [${arg[1]}] 加载成功`);
+                    } else {
+                        res(`模块 [${arg[1]}] 加载失败`);
+                    }
                 }
-            }
-        case 'unload':
-            if (modules[arg[1]] == undefined) {
-                return `模块 [${arg[1]}] 未找到`;
-            } else {
-                if (unload(arg[1])) {
-                    return `模块 [${arg[1]}] 卸载成功`;
+                break;
+            case 'unload':
+                if (modules[arg[1]] == undefined) {
+                    return `模块 [${arg[1]}] 未找到`;
                 } else {
-                    return `模块 [${arg[1]}] 卸载失败`;
+                    if (unload(arg[1])) {
+                        res(`模块 [${arg[1]}] 卸载成功`);
+                    } else {
+                        res(`模块 [${arg[1]}] 卸载失败`);
+                    }
                 }
-            }
-        case 'list':
-            let str = [];
-            for (let i in modules) {
-                str.push(i);
-            }
-            return str;
-        case 'reload':
-            unloadAll();
-            loadAll();
-            return '重载完毕';
-        case 'help':
-            let str2 = [];
-            str2.push('module load <module> - 加载一个模块');
-            str2.push('module unload <module> - 卸载一个模块');
-            str2.push('module reload - 重新加载所有模块');
-            str2.push('module list - 列出所有装载的模块');
-            return str2;
-        case 'debug':
-            switch (arg[1]) {
-                case 'on':
-                    debug = true;
-                    return '调试模式已开启';
-                default:
-                    return '调试模式已关闭';
-            }
-        default:
-            return '指令参数不足，键入module help查看命令';
-    }
+                break;
+            case 'list':
+                let str = [];
+                for (let i in modules) {
+                    str.push(i);
+                }
+                res(str);
+                break;
+            case 'reload':
+                unloadAll();
+                loadAll();
+                res('重载完毕');
+                break;
+            case 'help':
+                let str2 = [];
+                str2.push('module load <module> - 加载一个模块');
+                str2.push('module unload <module> - 卸载一个模块');
+                str2.push('module reload - 重新加载所有模块');
+                str2.push('module list - 列出所有装载的模块');
+                res(str2);
+                break;
+            case 'debug':
+                switch (arg[1]) {
+                    case 'on':
+                        debug = true;
+                        res('调试模式已开启');
+                        break;
+                    default:
+                        res('调试模式已关闭');
+                    break;
+                }
+            default:
+                res('指令参数不足，键入module help查看命令');
+                break;
+        }
+    })
 });
 
 NIL.modulesManager = {

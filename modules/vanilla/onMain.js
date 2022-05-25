@@ -89,16 +89,14 @@ function onRegex(str, e) {
                     NIL.bots.getBot(e.self_id).sendGroupMsg(item.id, buildString(item.text, tmp));
                     break;
                 case "nbcmd":
-                    NIL.NBCMD.run_cmd(buildString(item.text, tmp), (err, result) => {
-                        if (err) {
-                            e.reply(`执行出错：${err.message}`, true);
+                    NIL.NBCMD.run_cmd(buildString(item.text, tmp)).then((result)=>{
+                        if (Array.isArray(result)) {
+                            e.reply(result.join('\n'), true);
                         } else {
-                            if (Array.isArray(result)) {
-                                e.reply(result.join('\n'), true);
-                            } else {
-                                e.reply(result, true);
-                            }
+                            e.reply(result, true);
                         }
+                    }).catch((err)=>{
+                        e.reply(`执行出错：${err}`, true);
                     });
                     break;
                 case "runcmd":
@@ -202,17 +200,15 @@ function onMain(e) {
                 return;
             }
             let cmd = text.substring(cfg.nbcmd.length + 1);
-            NIL.NBCMD.run_cmd(cmd, (err, result) => {
-                if (err) {
-                    e.reply(err.message, true);
+            NIL.NBCMD.run_cmd(cmd).then(result=>{
+                if (Array.isArray(result)) {
+                    e.reply(result.join('\n'), true);
                 } else {
-                    if (Array.isArray(result)) {
-                        e.reply(result.join('\n'), true);
-                    } else {
-                        e.reply(result, true);
-                    }
+                    e.reply(result, true);
                 }
-            });
+            }).catch((err)=>{
+                e.reply(err, true);
+            })
             break;
         case cfg.bind:
             if (pt.length < 2) {

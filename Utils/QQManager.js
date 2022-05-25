@@ -176,49 +176,63 @@ function getOnRobotOnline(qq) {
 }
 
 NIL.NBCMD.regUserCmd('qq', 'QQ机器人模块', (arg) => {
-    switch (arg[0]) {
-        case 'login':
-            if (Clients.has(Number(arg[1]))) {
-                logger.warn('这个账号已经登录了');
-                return;
-            }
-            addClient(Number(arg[1]));
-            break;
-        case 'logout':
-            logout(Number(arg[1]));
-            break;
-        case 'autologin':
-            switch (arg[1]) {
-                case "add":
-                    if (arg[2]) {
+    return new Promise((res,rej)=>{
+        switch (arg[0]) {
+            case 'login':
+                if (Clients.has(Number(arg[1]))) {
+                    res('这个账号已经登录了');
+                    break;
+                }
+                addClient(Number(arg[1]));
+                res(`账号：${arg[1]} 添加成功`);
+                break;
+            case 'logout':
+                logout(Number(arg[1]));
+                res(`账号：${arg[1]} 下线完毕`);
+                break;
+            case 'autologin':
+                switch (arg[1]) {
+                    case "add":
+                        if (arg[2]) {
+                            for (var i in bots) {
+                                if (bots[i].qq.toString() == arg[2]) {
+                                    res('已存在一个自动登录项：' + arg[2]);
+                                }
+                            }
+                            AddConfig(arg[2]);
+                            res(`添加登录项 ${arg[2]} 成功`);
+                        } else {
+                            res('参数错误：无法找到<qq>，键入qq autologin help查看帮助');
+                        }
+                        break;
+                    case "remove":
                         for (var i in bots) {
                             if (bots[i].qq.toString() == arg[2]) {
-                                return '已存在一个自动登录项：' + arg[2];
+                                bots.splice(i);
+                                NIL.IO.WriteTo('./Data/QQ.json', JSON.stringify(bots, null, '\t'));
+                                res(`移除登录项 ${arg[2]} 成功`);
                             }
                         }
-                        AddConfig(arg[2]);
-                        return `添加登录项 ${arg[2]} 成功`;
-                    } else {
-                        return '参数错误：无法找到<qq>，键入qq autologin help查看帮助';
-                    }
-                case "remove":
-                    for (var i in bots) {
-                        if (bots[i].qq.toString() == arg[2]) {
-                            bots.splice(i);
-                            NIL.IO.WriteTo('./Data/QQ.json', JSON.stringify(bots, null, '\t'));
-                            return `移除登录项 ${arg[2]} 成功`;
-                        }
-                    }
-                    return '没有这样的登录项：' + arg[2];
-                default:
-                    return `没有这样的指令：${arg[1]}`;
-            }
-        case 'help':
-            return ['qq login <qq> - 登录一个QQ账号', 'qq logout <qq> - 下线一个QQ账号', 'qq autologin <add|remove> <qq> - 自动登录设置'];
-        default:
-    }
+                        res('没有这样的登录项：' + arg[2]);
+                        break;
+                    default:
+                        res(`没有这样的指令：${arg[1]}`);
+                        break;
+                }
+            case 'help':
+                res(['qq login <qq> - 登录一个QQ账号', 'qq logout <qq> - 下线一个QQ账号', 'qq autologin <add|remove> <qq> - 自动登录设置']);
+                break;
+            default:
+                break;
+        }
+    })
 });
 
+/**
+ * 
+ * @param {} qq 
+ * @returns {Client}
+ */
 function getBot(qq) {
     return Clients.get(qq.toString());
 }

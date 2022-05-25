@@ -1,16 +1,17 @@
 var user_cmds = new Map();
 const logger = new NIL.Logger('CMDManager');
 
-function run_cmd(cmd,callback){
+/**
+ * 
+ * @param {String} cmd 
+ * @returns {Promise} callback 
+ */
+function run_cmd(cmd){
     const args = Parser(cmd);
     if(user_cmds.has(args[0])){
-        try{
-            callback(null,user_cmds.get(args[0]).callback(args.slice(1,args.length)));
-        }catch(err){
-            callback(err);
-        }
+        return user_cmds.get(args[0]).callback(args.slice(1,args.length))
     }else{
-        callback(new Error('没有这个命令：'+args[0]));
+        return new Promise((res,rej)=>{rej(`没有这样的命令：${args[0]}，键入help查看可用命令。`)})
     }
 }
 
@@ -70,19 +71,31 @@ NIL.NBCMD = {
 }
 
 regUserCmd('help', '帮助列表', (arg) => {
-    let cmds = [];
-    user_cmds.forEach((v, k) => {
-        cmds.push(`${k} - ${v.desc}`);
-    });
-    return cmds;
+    return new Promise((res,rej)=>{
+        let cmds = [];
+        try{
+            user_cmds.forEach((v, k) => {
+                cmds.push(`${k} - ${v.desc}`);
+            });
+            res(cmds);
+        }catch(err){
+            rej(err);
+        }
+    })
 });
 
 regUserCmd('?', '帮助列表', (arg) => {
-    let cmds = [];
-    user_cmds.forEach((v, k) => {
-        cmds.push(`${k} - ${v.desc}`);
-    });
-    return cmds;
+    return new Promise((res,rej)=>{
+        let cmds = [];
+        try{
+            user_cmds.forEach((v, k) => {
+                cmds.push(`${k} - ${v.desc}`);
+            });
+            res(cmds);
+        }catch(err){
+            rej(err);
+        }
+    })
 });
 
 
@@ -96,68 +109,16 @@ const OverLoadType = {
 }
 
 class CMDRegister {
-    constructor(name, desc, permission = 0) {
-        this._Enums = {};
-        this._Overloads = {};
-        this._cmds = [];
-        this._name = name;
-        this._desc = desc;
-        this._permission = permission;
+    names = [];
+    description = '';
+    args = [];
+    #callbacks = [];
+    constructor(myName,desc){
+        this.names.push(myName);
+        this.description = desc;
     }
-    /**
-     * 设置参数列表
-     * @param {String} _name 参数代号
-     * @param {Array} _enum 指令参数列表 
-     */
-    setEnum(_name, _enum, nesscary = true) {
-        if (!Array.isArray(_enum)) throw new Error('指令参数必须为数组类型');
-        this._Enums[_name] = _enum;
-        if (nesscary) {
-            this.mandatory(_name, 3);
-        } else {
-            this.optional(_name, 3);
-        }
+    setup(){
     }
-    /**
-     * 添加一个必选参数
-     * @param {String} _name 指令代号
-     * @param {Number} type 指令类型
-     */
-    mandatory(_name, type) {
-        this._Overloads[_name] = { type, nesscary: true };
-    }
-    optional(_name, type) {
-        this._Overloads[_name] = { type, nesscary: false };
-    }
-    overload(_aegs) {
-        if (!Array.isArray(_aegs)) throw new Error('指令参数必须为数组类型');
-        let tmp = [];
-        _aegs.forEach(cmd => {
-            if (this._Overloads[cmd] == undefined) {
-                throw new Error("参数使用前必须注册");
-            } else {
-                tmp.push({
-                    type: this._Overloads[cmd].type,
-                    name: cmd,
-                    overloads: this._Enums[cmd],
-                    nesscary: this._Overloads[cmd]
-                });
-            }
-        });
-        this._cmds.push(tmp);
-    }
-    setCallback(callback) {
-        this._callback = callback;
-    }
-    setup() {
-        user_cmds.set(this._name, {
-            desc: this._desc,
-            permission: this._permission,
-            callbacks: this._cmds,
-            Callback: this._callback
-        });
-    }
-    delete(){
-        remUserCmd(this._name);
+    overload(func){
     }
 }

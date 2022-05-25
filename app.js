@@ -1,5 +1,5 @@
 global.NIL = {};
-NIL.version = [1, 0, 8];
+NIL.version = [1, 0, 9];
 require('./Utils/Logger');
 const { ErrorCode } = require('oicq');
 var logger = new NIL.Logger('MAIN');
@@ -23,31 +23,31 @@ logger.info(`NilBridge2 v${NIL.version.join('.')}`);
 NIL.EventManager.on('onNilBridgeStart', {});
 
 rl.on('line', (input) => {
-    NIL.NBCMD.run_cmd(input, (err, callback) => {
-        if (err) {
-            logger.warn(err.message);
-        } else {
-            switch (Object.prototype.toString.call(callback)) {
+    NIL.NBCMD.run_cmd(input).then(result=>{
+            switch (Object.prototype.toString.call(result)) {
                 case '[object Array]':
-                    callback.forEach(element => {
+                    result.forEach(element => {
                         logger.info(element);
                     });
                     break;
                 case '[object String]':
-                    logger.info(callback);
+                    logger.info(result);
                     break;
             }
-        }
+        }).catch(err=>{
+            logger.error(err);
+        });
     });
-});
 
 NIL.NBCMD.regUserCmd('stop', '关闭NilBridge', () => {
-    NIL.EventManager.on('onNilBridgeStop', {});
-    NIL.bots.logoutAll();
-    setTimeout(() => {
-        process.exit();
-    }, 1000);
-    return '正在退出';
+    return new Promise((res,rej)=>{
+        NIL.EventManager.on('onNilBridgeStop', {});
+        NIL.bots.logoutAll();
+        setTimeout(() => {
+            process.exit();
+        }, 1000);
+        res('正在退出');
+    })
 })
 
 

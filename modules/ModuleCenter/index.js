@@ -15,7 +15,7 @@ function httpDownloadModule(url,callback) {
     .then(callback).catch(console.error);
 }
 
-let api_data = {};
+let api_data = {modules:'无法同步modules.nilbridge.site!!'};
 
 let here_modules = [];
 
@@ -36,55 +36,59 @@ function tick_do(){
         });
     }).on('error', (e) => {
         console.log(e);
+        logger.error('无法连接：modules.nilbridge.site');
         logger.error(`Got error: ${e.message}`);
     });
-    NIL.NBCMD.run_cmd('module list',(err,list)=>{
-        if(err){
-
-        }else{
-            here_modules = list;
-        }
-    })
+    NIL.NBCMD.run_cmd('module list').then((list)=>{
+        here_modules = list;
+    }).catch((err)=>{});
 }
-
-tick_do();
 
 let int = setInterval(tick_do,1000 * 60 * 3);
 
 function onCMD(args){
-    switch(args[0]){
-        case 'install':
-        case 'i':
-            let moduleName = args[1];
-            if(moduleName){
-                if(Object.keys(api_data.modules).includes(moduleName)){
-                    if(here_modules.includes(moduleName) == false){
-                        httpDownloadModule(`http://modules.nilbridge.site${api_data.modules[moduleName].build.path}`,()=>{
-                            logger.info(`模块 ${moduleName} 安装完成`);
-                        });
-                        return '正在从模块中心安装：'+moduleName+'，可能需要一段时间';
+    return new Promise((res,rej)=>{
+        switch(args[0]){
+            case 'install':
+            case 'i':
+                let moduleName = args[1];
+                if(moduleName){
+                    if(Object.keys(api_data.modules).includes(moduleName)){
+                        if(here_modules.includes(moduleName) == false){
+                            httpDownloadModule(`http://modules.nilbridge.site${api_data.modules[moduleName].build.path}`,()=>{
+                                logger.info(`模块 ${moduleName} 安装完成`);
+                            });
+                            res('正在从模块中心安装：'+moduleName+'，可能需要一段时间');
+                        }else{
+                            res('已经安装了这个模块！');
+                            
+                        }
                     }else{
-                        return '已经安装了这个模块！'
+                        res(`模块中心没有名为 ${moduleName} 的模块`);
                     }
                 }else{
-                    return `模块中心没有名为 ${moduleName} 的模块`
+                    res('使用方法：mgm install <模块名称>');
                 }
-            }else{
-                return '使用方法：mgm install <模块名称>';
-            }
-        case 'help':
-            return ['mgm install <模块名称> - 从模块中心安装模块','mgm list - 查看模块中心的已有模块'];
-        case 'list':
-            return Object.keys(api_data.modules);
-        default:
-            return `没有这个命令，使用 mgm help 查看可用命令`
-    }
+                break;
+            case 'help':
+                res(['mgm install <模块名称> - 从模块中心安装模块','mgm list - 查看模块中心的已有模块']);
+                break;
+            case 'list':
+                res(Object.keys(api_data.modules));
+                break;
+            default:
+                res(`没有这个命令，使用 mgm help 查看可用命令`);
+                break;
+        }
+    })
+    
 }
 
 
 class module_center extends NIL.ModuleBase{
     can_be_reload = false;
     onStart(api){
+        tick_do();
         api.regCMD('mgm','包管理工具',onCMD);
     }
     onStop(){
