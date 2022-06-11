@@ -1,7 +1,7 @@
 const urllib = require('urllib');
 const compressing = require('compressing');
 const path = require('path');
-const http = require('http');
+const http = require('https');
 
 const logger = new NIL.Logger('ModulesCenter');
 
@@ -20,11 +20,11 @@ let api_data = {modules:'无法同步modules.nilbridge.site!!'};
 let here_modules = [];
 
 function tick_do(){
-    http.get('http://modules.nilbridge.site/info.json',(res)=>{
+    http.get('https://modules.nilbridge.site/info.json',(res)=>{
         let page = '';
         const { statusCode } = res;
         if(statusCode != 200){
-            throw new Error(new Error(`Request Failed.Status Code: ${statusCode}`));
+            logger.error(new Error(`Request Failed.Status Code: ${statusCode}`));
         }
         res.on('data',(dt)=>{
             page += dt;
@@ -41,7 +41,7 @@ function tick_do(){
     });
     NIL.NBCMD.run_cmd('module list').then((list)=>{
         here_modules = list;
-    }).catch((err)=>{});
+    }).catch((err)=>console.log);
 }
 
 let int = setInterval(tick_do,1000 * 60 * 3);

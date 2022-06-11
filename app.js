@@ -1,5 +1,5 @@
 global.NIL = {};
-NIL.version = [1, 0, 9];
+NIL.version = [1, 1, 0];
 require('./Utils/Logger');
 const { ErrorCode } = require('oicq');
 var logger = new NIL.Logger('MAIN');
@@ -55,5 +55,5 @@ process.on('unhandledRejection', (reason, promise) => {
     console.log(reason);
     logger.warn(`看到这条消息表明，您的参数出现了${'null'.bgRed}或者${'undefined'.bgRed}，请检查`);
     logger.warn(`error type : ${ErrorCode[reason.code]}`);
-    logger.warn(`errorcode : ${reason.code},descr : ${reason.message.bgRed}`);
+    logger.warn(`errorcode : ${reason.code},descr : ${reason.message}`);
 });
