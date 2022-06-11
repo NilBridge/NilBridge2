@@ -55,7 +55,7 @@ function onCMD(args){
                 if(moduleName){
                     if(Object.keys(api_data.modules).includes(moduleName)){
                         if(here_modules.includes(moduleName) == false){
-                            httpDownloadModule(`http://modules.nilbridge.site${api_data.modules[moduleName].build.path}`,()=>{
+                            httpDownloadModule(`https://fastly.jsdelivr.net/gh/NilBridge/nilbridge-module-center@master/docs${api_data.modules[moduleName].build.path}`,()=>{
                                 logger.info(`模块 ${moduleName} 安装完成`);
                             });
                             res('正在从模块中心安装：'+moduleName+'，可能需要一段时间');
