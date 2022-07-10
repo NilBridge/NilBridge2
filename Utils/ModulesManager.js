@@ -252,8 +252,6 @@ NIL.NBCMD.regUserCmd('module', '模块管理器', (arg) => {
 });
 
 NIL.modulesManager = {
-    unloadAll,
-    loadAll,
     load,
     unload
 }

@@ -65,7 +65,7 @@ function onws(dt) {
         case 'mobdie':
             var mob = "entity." + data.params.srctype.toLowerCase() + ".name";
             if(mobs[mob] != undefined){
-                NIL.bots.getBot(cfg.self_id).sendGroupMsg(langhelper.get('MEMBER_KILL_BY_MOBS',dt.server,data.params.mobname,mobs[mob]));
+                NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat,langhelper.get('MEMBER_KILL_BY_MOBS',dt.server,data.params.mobname,mobs[mob]));
             }
             break;
     }

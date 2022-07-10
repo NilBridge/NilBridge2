@@ -1,0 +1,23 @@
+{
+  "name": "fp-manager",
+  "version": "1.0.0",
+  "description": "manager MCBE fakeplayer in qq group",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NilBridge/fp-manager.git"
+  },
+  "keywords": [
+    "nilbridge",
+    "fakeplayer"
+  ],
+  "author": "Sbaoor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NilBridge/fp-manager/issues"
+  },
+  "homepage": "https://github.com/NilBridge/fp-manager#readme"
+}
