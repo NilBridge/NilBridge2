@@ -149,8 +149,14 @@ function onRegex(str, e) {
 }
 
 NIL.NBCMD.regUserCmd('regexreload', '重载正则表达式', (arg) => {
-    regexs = JSON.parse(NIL.IO.readFrom(path.join(__dirname, "regex.json")));
-    return '正则表达式重载完成';
+    return new Promise((res,rej)=>{
+        try{
+            regexs = JSON.parse(NIL.IO.readFrom(path.join(__dirname, "regex.json")));
+            res('正则表达式重载完成');
+        }catch(err){
+            rej(err);
+        }
+    })
 });
 
 function onMain(e) {
