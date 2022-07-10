@@ -68,7 +68,12 @@ class SERVER {
 
 function onmessage(name,k,iv){
     return (data)=>{
-        NIL.EventManager.on('onWebsocketReceived',{server:name,message:AESdecrypt(k,iv,JSON.parse(data).params.raw)});
+        try{
+            NIL.EventManager.on('onWebsocketReceived',{server:name,message:AESdecrypt(k,iv,JSON.parse(data).params.raw)});
+        }catch(err){
+            logger.error(err);
+            logger.warn('websocket连接密码错误！！！请检查！！！');
+        }
     }
 }
 
