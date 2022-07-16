@@ -18,9 +18,9 @@ var GetFormatText = function (e) {
             case "at":
                 if (e.message[i].qq.toString() == 'all') {
                     rt += langhelper.get("MESSAGE_AT_ALL");
-                    continue;
+                    break;
                 }
-                rt += langhelper.get('MESSAGE_AT', NIL._vanilla.wl_exists(e.message[i].qq)?NIL._vanilla.get_xboxid(e.message[i].qq):e.sender.nick);
+                rt += langhelper.get('MESSAGE_AT', NIL._vanilla.wl_exists(e.message[i].qq)?NIL._vanilla.get_xboxid(e.message[i].qq):e.message[i].qq.toString());
                 break;
             case "image":
                 rt += langhelper.get("MESSAGE_IMAGE");
