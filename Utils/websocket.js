@@ -38,7 +38,7 @@ module.exports = class{
         this.ws.on('connectFailed',(err)=>{
             this._ifAlive = false;
             this._logger.error(err);
-            this._logger.warn(`connect failed, restart connect in ${(this._reConnectTime/1000).toFixed(1)} seconds`);
+            this._logger.warn(`连接失败，将在 ${(this._reConnectTime/1000).toFixed(1)} 秒后重新连接`);
             setTimeout(()=>{
                 this.ws.connect(this.url);
             },this._reConnectTime);
@@ -56,6 +56,10 @@ module.exports = class{
         }
     }
     send(data){
-        this.con.send(data);
+        try{
+            this.con.send(data);
+        }catch(err){
+            this._logger.info('无法向服务器发送数据，请检查连接是否正常');
+        }
     }
 }
