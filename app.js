@@ -1,5 +1,5 @@
 global.NIL = {};
-NIL.version = [1, 1, 3];
+NIL.version = [1, 1, 4];
 require('./Utils/Logger');
 const { ErrorCode } = require('oicq');
 var logger = new NIL.Logger('MAIN');
