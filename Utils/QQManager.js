@@ -49,6 +49,9 @@ function autoLogin(qq, pwd, platform, qrcode = true) {
     addOnEvent(client, qq);
     client.on("system.login.slider", () => {
         logger.warn(qq, '触发设备锁');
+        process.stdin.on("data", data => {
+            client.submitSlider(data);
+        })
     });
     if (qrcode) {
         client.on("system.login.qrcode", function (e) {
