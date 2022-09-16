@@ -1,6 +1,8 @@
 const Lang = require('./Lang');
 const langhelper = new Lang('lang.ini');
 
+const chatCmd="#";
+
 function SendTextAll(text) {
     NIL.SERVERS.forEach((s, k) => {
         s.sendText(text);
@@ -8,7 +10,20 @@ function SendTextAll(text) {
 }
 
 function onChat(e) {
-    SendTextAll(langhelper.get('GROUP_MEMBER_CHAT',NIL._vanilla.wl_exists(e.sender.qq)?NIL._vanilla.get_xboxid(e.sender.qq):e.sender.nick, GetFormatText(e)));
+    let checked=chatCheck(e)
+    if(!checked) return;
+    SendTextAll(langhelper.get('GROUP_MEMBER_CHAT',NIL._vanilla.wl_exists(e.sender.qq)?NIL._vanilla.get_xboxid(e.sender.qq):e.sender.nick, checked);
+}
+
+function chatCheck(e){
+    let msg=GetFormatText(e);
+    let r=msg.indexOf(chatCmd);
+    
+    if(r === 0){
+        return msg.slice(chatCmd.length,)
+    }else{
+        return false
+    }
 }
 
 var GetFormatText = function (e) {
