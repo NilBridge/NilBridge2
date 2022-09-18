@@ -27,19 +27,19 @@ function onws(dt) {
     let data = JSON.parse(dt.message);
     switch (data.cause) {
         case 'chat':
-            NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_CHAT', dt.server, data.params.sender, data.params.text));
+            if(cfg.onChat) NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_CHAT', dt.server, data.params.sender, data.params.text));
             send2Other(dt.server, data.cause, data.params.sender, data.params.text);
             NIL.EventManager.on('onPlayerChat', dt);
             break;
         case 'join':
             times.set(data.params.sender, new Date().getTime());
             NIL._vanilla.add_time(data.params.sender, 0, 1);
-            NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_JOIN', dt.server, data.params.sender, NIL._vanilla.get_player(data.params.sender).join));
+            if(cfg.onChat) NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_JOIN', dt.server, data.params.sender, NIL._vanilla.get_player(data.params.sender).join));
             send2Other(dt.server, data.cause, data.params.sender);
             NIL.EventManager.on('onPlayerJoin', dt);
             break;
         case 'left':
-            NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_LEFT', dt.server, data.params.sender));
+            if(cfg.onChat) NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat, langhelper.get('MEMBER_LEFT', dt.server, data.params.sender));
             send2Other(dt.server, data.cause, data.params.sender);
             NIL.EventManager.on('onPlayerLeft', dt);
             if (times.has(data.params.sender)) {
@@ -48,24 +48,24 @@ function onws(dt) {
             }
             break;
         case 'start':
-            NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_START", dt.server));
+            if(cfg.onMain) NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_START", dt.server));
             NIL.EventManager.on('onServerStart', dt);
             break;
         case 'stop':
-            NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_STOP", dt.server));
+            if(cfg.onMain) NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_STOP", dt.server));
             NIL.EventManager.on('onServerStop', dt);
             break;
         case "accident_stop":
-            NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_STOP_ACCIDENT", dt.server));
+            if(cfg.onMain) NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, langhelper.get("SERVER_STOP_ACCIDENT", dt.server));
             NIL.EventManager.on('onServerAccidentStop', dt);
             break;
         case 'plantext':
-            NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, data.params.text);
+            if(cfg.onMain) NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.main, data.params.text);
             break;
         case 'mobdie':
             var mob = "entity." + data.params.srctype.toLowerCase() + ".name";
             if(mobs[mob] != undefined){
-                NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat,langhelper.get('MEMBER_KILL_BY_MOBS',dt.server,data.params.mobname,mobs[mob]));
+                if(cfg.onChat) NIL.bots.getBot(cfg.self_id).sendGroupMsg(cfg.group.chat,langhelper.get('MEMBER_KILL_BY_MOBS',dt.server,data.params.mobname,mobs[mob]));
             }
             break;
     }
