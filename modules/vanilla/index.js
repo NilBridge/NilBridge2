@@ -35,6 +35,8 @@ const onWebsocket = require("./onWebsocket");
 
 let playerdata = JSON.parse(NIL.IO.readFrom(path.join(__dirname, 'playerdata.json')))
 const cfg = JSON.parse(NIL.IO.readFrom(path.join(__dirname, 'config.json')));
+let bot = {isOnline:false,id:cfg.self_id}
+let group = {main:null,chat:null}
 
 function save_playerdata() {
     NIL.IO.WriteTo(path.join(__dirname, 'playerdata.json'), JSON.stringify(playerdata, null, '\t'));
@@ -54,6 +56,18 @@ class vanilla extends NIL.ModuleBase {
         api.addEvent('onPlayerChat');
         api.addEvent('onMemberBinding');
         api.addEvent('onMemberUnBinding');
+        api.listen('onRobotOnline',e=>{
+            //{ qq: '123456' }
+            //console.log(e)
+            let qq= Number(e.qq)
+            if(qq===bot.id){
+                bot.isOnline = true
+                let grouplist = NIL.bots.getBot(bot.id).gl
+                if (grouplist.has(cfg.group.main)) group.main= cfg.group.main;
+                if (grouplist.has(cfg.group.chat)) group.chat= cfg.group.chat;
+            }
+
+        })
         api.listen('onWebsocketReceived', (dt) => {
             onWebsocket(dt);
         });
@@ -74,6 +88,8 @@ class vanilla extends NIL.ModuleBase {
         }
         NIL._vanilla = {
             cfg: cfg,
+            bot: bot,
+            group: group,
             wl_add,
             wl_exists,
             wl_remove,
