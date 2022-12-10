@@ -48,7 +48,7 @@ function autoLogin(qq, pwd, platform, qrcode = true) {
     Clients.set(qq, client);
     addOnEvent(client, qq);
     client.on("system.login.slider", () => {
-        logger.warn(qq, '触发设备锁');
+        logger.warn(qq, '滑块验证');
         process.stdin.on("data", data => {
             client.submitSlider(data);
         })
