@@ -12,7 +12,7 @@ function SendTextAll(text) {
 function onChat(e) {
     let checked=chatCheck(e)
     if(!checked) return;
-    SendTextAll(langhelper.get('GROUP_MEMBER_CHAT',NIL._vanilla.wl_exists(e.sender.qq)?NIL._vanilla.get_xboxid(e.sender.qq):e.sender.nick, checked);
+    SendTextAll(langhelper.get('GROUP_MEMBER_CHAT',NIL._vanilla.wl_exists(e.sender.qq)?NIL._vanilla.get_xboxid(e.sender.qq):e.sender.nick, checked));
 }
 
 function chatCheck(e){
