@@ -1,10 +1,29 @@
 {
+  "name": "qbridge",
+  "version": "2.0.0",
+  "description": "<div align=\"center\">",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "patch-package"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iQiaFUN/qBridge.git"
+  },
+  "author": "iQiaFUN",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/iQiaFUN/qBridge/issues"
+  },
+  "homepage": "https://github.com/iQiaFUN/qBridge#readme",
   "dependencies": {
     "colors": "^1.4.0",
     "compressing": "^1.5.1",
     "cpu-stat": "^2.0.1",
     "md5-node": "^1.0.1",
     "oicq": "^2.2.0",
+    "patch-package": "^6.5.1",
     "silly-datetime": "^0.1.2",
     "sync-request": "^6.1.0",
     "urllib": "^2.38.0",
