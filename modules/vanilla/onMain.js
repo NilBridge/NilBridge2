@@ -137,7 +137,7 @@ function onRegex(str, e) {
                             html += data
                         })
                         res.on("end", () => {
-                            e.reply(item.text.replcae('{data}',html),true);
+                            e.reply(item.text.replace('{data}',html),true);
                         })
                     }).on("error", (e) => {
                         e.reply(`获取数据失败: ${e.message}`,true);
