@@ -22,7 +22,7 @@
     "compressing": "^1.5.1",
     "cpu-stat": "^2.0.1",
     "md5-node": "^1.0.1",
-    "oicq": "^2.2.0",
+    "oicq": "^2.3.0",
     "patch-package": "^6.5.1",
     "silly-datetime": "^0.1.2",
     "sync-request": "^6.1.0",
