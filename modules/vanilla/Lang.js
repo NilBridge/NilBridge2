@@ -19,7 +19,7 @@ class Lang{
         return text;
     }
     init(path){
-        const newpath = __dirname+'\\'+path;
+        const newpath = __dirname+'/'+path;
         let input = fs.createReadStream(newpath,{encoding:"utf8"});
         const rl = readline.createInterface({
           input: input
