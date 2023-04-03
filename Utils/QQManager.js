@@ -1,5 +1,5 @@
 "use strict" //oicq需要开启严格模式
-const { createClient, segment, Message, Client } = require('oicq');
+const { createClient, Client } = require('icqq');
 const logger = new NIL.Logger("QQManager");
 NIL.EventManager.addEvent('QQManager', 'onRobotOnline');
 NIL.EventManager.addEvent('QQManager', 'onGroupMessageReceived');
@@ -22,7 +22,12 @@ function AddConfig(qq) {
 }
 
 function addClient(qq) {
-    const client = createClient(qq, { platform: 2, kickoff: false, ignore_self: true, resend: true, brief: true });
+    //const client = createClient(qq, { platform: 2, kickoff: false, ignore_self: true, resend: true, brief: true });
+    const client = createClient({
+        platform: 2,
+        ignore_self: true,
+        resend: true,
+    })
     Clients.set(qq, client);
     client.on("system.login.qrcode", function (e) {
         process.stdin.once("data", (e) => {
@@ -39,28 +44,50 @@ function addClient(qq) {
  */
 function addOnEvent(client, qq) {
     client.on("system.online", getOnRobotOnline(qq));
-    client.on('message.group',getOnMessage(qq));
+    client.on('message.group', getOnMessage(qq));
     client.on('notice.group.decrease', getOnMemeberLeft());
 }
 
-function autoLogin(qq, pwd, platform, qrcode = true) {
-    const client = createClient(qq, { platform, kickoff: false, ignore_self: true, resend: true, brief: true });
+function autoLogin(qq, pwd, platform = 2, qrcode = true) {
+    const client = createClient({
+        platform,
+        ignore_self: true,
+        resend: true,
+    })
     Clients.set(qq, client);
     addOnEvent(client, qq);
-    client.on("system.login.slider", () => {
-        logger.warn(qq, '滑块验证');
-        process.stdin.on("data", data => {
-            client.submitSlider(data);
+    client.on('system.login.slider', (e) => {
+        console.log('输入滑块地址获取的ticket后继续。\n滑块地址:    ' + e.url)
+        process.stdin.once('data', (data) => {
+            client.submitSlider(data.toString().trim())
         })
-    });
+    })
+    client.on('system.login.device', (e) => {
+        console.log('请选择验证方式:(1：短信验证   其他：扫码验证)')
+        process.stdin.once('data', (data) => {
+            if (data.toString().trim() === '1') {
+                client.sendSmsCode()
+                console.log('请输入手机收到的短信验证码:')
+                process.stdin.once('data', (res) => {
+                    client.submitSmsCode(res.toString().trim())
+                })
+            } else {
+                console.log('扫码完成后回车继续：' + e.url)
+                process.stdin.once('data', () => {
+                    client.login()
+                })
+            }
+        })
+    })
     if (qrcode) {
-        client.on("system.login.qrcode", function (e) {
-            process.stdin.once("data", (e) => {
-                this.login();
+        client.on('system.login.qrcode', (e) => {
+            console.log('扫码完成后回车继续:    ')
+            process.stdin.once('data', () => {
+                client.login()
             })
         }).login();
     } else {
-        client.login(pwd);
+        client.login(Number(qq),pwd);
     }
 }
 
@@ -70,8 +97,8 @@ bots.forEach(bot => {
     autoLogin(bot.qq, bot.pwd, bot.platform, bot.qrcode);
 });
 
-class GroupMessageGroupArgs{
-    constructor(e){
+class GroupMessageGroupArgs {
+    constructor(e) {
         /**
          * 群号
          */
@@ -84,19 +111,19 @@ class GroupMessageGroupArgs{
 }
 
 class GroupMessageReceivedEventArgs {
-    constructor(e,qq){
+    constructor(e, qq) {
         /**
          * 回复这条信息
          * @param {import('oicq').Sendable} content 要回复的消息
          * @param {boolean} qcote 是否引用原消息
          */
-        this.reply = (content,qcote)=>{
-            e.reply(content,qcote);
+        this.reply = (content, qcote) => {
+            e.reply(content, qcote);
         };
         /**
          * 撤回消息
          */
-        this.recall = ()=>{
+        this.recall = () => {
             e.recall();
         };
         /**
@@ -161,7 +188,7 @@ class GroupMessageReceivedEventArgs {
 
 function getOnMessage(qq) {
     return (e) => {
-        NIL.EventManager.on('onGroupMessageReceived', new GroupMessageReceivedEventArgs(e,qq));
+        NIL.EventManager.on('onGroupMessageReceived', new GroupMessageReceivedEventArgs(e, qq));
     }
 }
 
@@ -179,7 +206,7 @@ function getOnRobotOnline(qq) {
 }
 
 NIL.NBCMD.regUserCmd('qq', 'QQ机器人模块', (arg) => {
-    return new Promise((res,rej)=>{
+    return new Promise((res, rej) => {
         switch (arg[0]) {
             case 'login':
                 if (Clients.has(Number(arg[1]))) {
